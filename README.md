@@ -13,7 +13,7 @@
 | `claude.md` | Project instructions Claude reads before every response |
 | `templates/goal.md` | Fill-in-the-blank spec doc — start every build here |
 | `templates/plan.md` | Iterative plan template Claude writes after reading your goal |
-| `templates/build-protocol.md` | The full 60-minute build protocol with all steps |
+| `build-protocol.md` | The full 60-minute build protocol with all steps |
 | `.claude/commands/` | Slash commands for Claude Code users |
 | `prompts/` | Copy-paste prompts for Claude.ai web users |
 
