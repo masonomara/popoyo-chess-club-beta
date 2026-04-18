@@ -1,5 +1,7 @@
 # Full Stack Web App Build Protocol
 
+---
+
 ## I. Project Setup
 
 ### 1. Confirm that all project prerequisites are installed
@@ -16,7 +18,6 @@
 - [Context7 MCP](https://context7.com) (optional)
 
 **Learn More:** [Why Context7?](#why-context7)
-
 
 ### 2. Clone the project template and create a new GitHub repo
 
@@ -98,28 +99,22 @@ See `.env.local.example` for the expected keys.
 
 **Learn More:** [Supabase + Vercel Integration](https://supabase.com/docs/guides/getting-started/quickstarts/nextjs)
 
-## Learn More
+### 7. Add the `types` script to `package.json`
 
-### Why no separate backend?
+**Why:** Type generation must be a reproducible, one-command operation. Adding it manually now means it's always available and doesn't depends on Claude to set it up correctly.
 
-Server actions query Supabase directly from the server, so there's no need for a separate API layer. You get type-safe DB access, RLS enforcement, and no extra network hop. A dedicated backend only makes sense if you have complicated webhooks, third-party integrations, or logic that doesn't fit as a Postgres function.
+**How:** In `package.json`, add to the `scripts` object:
 
-### Why server components for reads?
+```json
+"types": "npx --yes supabase gen types typescript --project-id YOUR_PROJECT_ID > app/types/database.ts"
+```
 
-Server components query Supabase directly on the server and stream HTML to the client — no client hooks, no loading states, no extra round trips. Client components are reserved for anything that requires interactivity or a live connection (realtime subscriptions, forms).
+Replace `YOUR_PROJECT_ID` with the project ref from your Supabase dashboard URL: `https://supabase.com/dashboard/project/[project-id]`. This value is also in your `.env.local` as `SUPABASE_PROJECT_ID`.
 
-### Why RLS instead of app-level auth checks?
+Confirm it works:
 
-Row Level Security enforces access rules at the database layer, so they can't be bypassed by application bugs. Every table gets its own policies — who can select, insert, update, delete. If a server action has a bug, Supabase still won't return rows the user isn't allowed to see.
+```bash
+npm run types
+```
 
-### Why Postgres functions for complex mutations?
-
-Postgres functions let you bundle multiple SQL operations into a single RPC call, keeping the logic close to the data and reducing round trips. Use them when a mutation touches multiple tables or needs to run atomically.
-
-### Why realtime subscriptions must live in client components?
-
-Realtime is a WebSocket connection — it has to be established from the browser. A server component renders once and is done. Client components stay mounted and can maintain the socket, receive pushes from Supabase, and re-render when data changes.
-
-### Why generated types instead of Zod for your own DB?
-
-Supabase generates TypeScript types directly from your schema. Those types are the contract. Wrapping them in Zod would just duplicate the schema in a second place that can drift. Use Zod only at system boundaries — user-submitted form fields and external API responses — where you don't control the shape of the data.
+`app/types/database.ts` will be empty until you run the schema in Supabase — that's expected.
