@@ -1,29 +1,34 @@
-# [Project Name]
+# [Project Name] Goal
 
-> This should be ~1000 words and take 5–10 minutes to write.
+> Budget 5–10 minutes. Aim for ~1000 words. The more specific you are here, the less you course-correct later.
 >
-> At minimum, cover all six sections below. If your project demands more such as a specific algorithm, sample data, server functions, third-party integrations, business logic, feel free to add a section for each. Be as specific as the project requires.
+> Cover all six sections below. If your project requires more — a specific algorithm, business rules, sample data, input format, third-party integration, constraints — add a section for each.
 
 ## Project Context
 
-What is this app, why does it need to exist, and what problem does it solve? Include what already exists, what's broken or missing, and what the app needs to do.
+What exists today and what's broken or missing. What this app is, who it's for, and what problem it solves. Include the goal if it's distinct from the problem.
 
 ## User Roles
 
-Who uses the app? For each role, describe how they get access, what they can do, and what they cannot do. Include account fields if the app has auth.
+Who uses the app? For each role:
+- How they get access (e.g., manually seeded, invite, open signup)
+- What they can do
+- What they cannot do
+
+Include account fields if the app has auth (email, password, display name, etc.).
 
 ## User Flows
 
-Walk through the 2–3 core things a user does in the app, step by step. Start from the trigger (landing on the page, clicking a button) and end at the outcome.
+The 2–3 core things a user does, step by step. Number each step. Start from the trigger (opening the app, clicking a button) and end at the outcome.
 
 ## Screens
 
-List every screen with a one-line description of what it shows and does.
+Every screen with a one-line description of what it shows and does. Include sub-details for any screen with a non-obvious UI (form fields, toggles, dropdowns, bottom sheets).
 
 ## Success State
 
-How will you know the app is working? List 2–3 concrete, observable things you can check — not "it feels right," but "I submitted a game and the leaderboard updated."
+2–3 concrete, observable things you can check to confirm the app is working — not "it feels right," but "I submitted a game and the leaderboard updated."
 
 ## Key Mutations
 
-A mutation is any write to the database — a create, update, or delete. List every mutation the app needs to perform, one line each.
+Every write to the database — create, update, delete — one line each.
