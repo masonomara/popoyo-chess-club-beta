@@ -1,4 +1,4 @@
-Read `goal.md` and `app/types/database.ts`.
+Read `docs/goal.md` and `app/types/database.ts`.
 
 Build the primary read screen as a server component:
 - Query Supabase directly in the server component (no client hooks, no abstractions)

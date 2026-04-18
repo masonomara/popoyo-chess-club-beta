@@ -1,4 +1,4 @@
-Read `goal.md` and `app/types/database.ts`.
+Read `docs/goal.md` and `app/types/database.ts`.
 
 Build the primary write path end-to-end:
 - Create the server action for the main mutation in `app/actions.ts`

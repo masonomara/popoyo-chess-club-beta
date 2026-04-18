@@ -1,4 +1,4 @@
-Read `goal.md` thoroughly. Understand the context, users, flows, screens, success criteria, and key mutations.
+Read `docs/goal.md` thoroughly. Understand the context, users, flows, screens, success criteria, and key mutations.
 
 Then produce a concise plan that covers:
 1. The screens we're building and which is the first (read path target)

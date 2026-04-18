@@ -7,8 +7,8 @@ A scaffold and step-by-step protocol for building a full-stack web app (Next.js 
 | File/Folder | Purpose |
 |---|---|
 | `build-protocol.md` | The full step-by-step build guide |
-| `claude.md` | Rules Claude follows on every project |
-| `templates/goal.md` | Goal doc template to fill out before starting |
+| `CLAUDE.md` | Rules Claude follows on every project |
+| `docs/goal.md` | Goal doc template to fill out before starting |
 | `app/types/database.ts` | Placeholder for Supabase-generated types |
 | `.claude/commands/` | Slash commands — one per build step |
 
@@ -17,7 +17,7 @@ A scaffold and step-by-step protocol for building a full-stack web app (Next.js 
 1. Clone this repo into your new project folder: `git clone [repo] [project-name]`
 2. Run `npx create-next-app@latest .` — scaffold files are already there
 3. Create a new GitHub repo and push: `gh repo create [project-name] --public --push --source=.`
-4. Fill out `goal.md`
+4. Fill out `docs/goal.md`
 5. Follow `build-protocol.md` — use the slash commands at each step
 
 ## The 8 Steps

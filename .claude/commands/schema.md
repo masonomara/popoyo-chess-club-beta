@@ -1,4 +1,4 @@
-Read `goal.md` and `app/types/database.ts` thoroughly.
+Read `docs/goal.md` and `app/types/database.ts` thoroughly.
 
 Produce two SQL files:
 

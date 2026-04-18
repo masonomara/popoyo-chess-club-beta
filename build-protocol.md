@@ -1,142 +1,150 @@
-# 60-Minute Build Protocol
-
-> The complete reference for every step of the build.
+# Full Stack Web App Build Protocol
 
 ---
 
-## Step 0 — Project Setup
+## I. Project Setup
 
-Do all of this before starting the timer.
+### 1. Confirm project prerequisites are installed
+
+- [Node.js](https://nodejs.org) (v18+)
+- [GitHub CLI](https://cli.github.com) — run `gh auth login` to authenticate
+- [Claude Code](https://claude.ai/code)
+
+### 2. Clone project scaffold and create GitHub repo
 
 ```bash
-# Clone this repo into your new project folder
-git clone https://github.com/[your-username]/60-minute-build [project-name]
+git clone https://github.com/masonomara/60-minute-build [project-name]
 cd [project-name]
+git remote remove origin
+gh repo create [project-name] --public --source=. --push
+```
 
-# Create the Next.js app (scaffold files are already here)
+### 3. Create the Next.js app
+
+```bash
 npx create-next-app@latest .
 ```
 
-Recommended settings:
-- TypeScript: **Yes**
-- Linter: **ESLint**
-- React Compiler: **Yes**
-- Tailwind CSS: **No**
-- `src/` directory: **No**
-- App Router: **Yes**
-- Import alias: **No**
-- AGENTS.md: **No**
+Use these Next.js settings:
 
 ```bash
-# Create a new GitHub repo for your project and push
-gh repo create [project-name] --public --push --source=.
+Would you like to use the recommended Next.js defaults? › No, customize settings
+Would you like to use TypeScript? … Yes
+Which linter would you like to use? › ESLint
+Would you like to use React Compiler? … Yes
+Would you like to use Tailwind CSS? … No
+Would you like your code inside a `src/` directory? … No
+Would you like to use App Router? (recommended) … Yes
+Would you like to customize the import alias (`@/*` by default)? … No
+Would you like to include AGENTS.md to guide coding agents to write up-to-date Next.js code? › No
 ```
 
-**Checklist:**
-- [ ] Repo cloned
-- [ ] Next.js project created
-- [ ] New GitHub repo created and pushed
-- [ ] `claude.md` present at project root
-- [ ] `goal.md` present at project root
-- [ ] `.claude/commands/` present
-- [ ] `app/types/database.ts` present
+### 4. Commit and push
+
+```bash
+git add .
+git commit -m "init"
+git push origin main
+```
+
+### Checkpoint
+
+- [ ] Repo is live on GitHub
+- [ ] `CLAUDE.md` is at the project root
+- [ ] `docs/goal.md` is present
+- [ ] `.claude/commands/` is present
 
 ---
 
-## Step 1 — Goal + Plan _(5 min mark)_
+## Phase 2: Plan _(5 min mark)_
 
-Fill out `goal.md` with:
-- **Context** — what the app does and why
-- **Users** — who uses it
-- **Flows** — 2–3 core user flows
-- **Screens** — what screens exist
-- **Success** — how you'll know it works
-- **Key Mutations** — the main writes to the database
+**5. Write your goal**
 
-Then run `/plan` — Claude will read your goal and produce a concise build plan.
+- Open `docs/goal.md` and fill in: Context, Users, Flows, Screens, Success, Key Mutations
+- Keep it short — this is a spec, not an essay
+
+**6. Run `/plan`**
+
+- Claude reads `docs/goal.md` and produces a build plan: first screen, primary mutation, what to cut
 
 ---
 
-## Step 2 — Schema + Types _(15 min mark)_
+## Phase 3: Architecture _(15 min mark)_
 
-Run `/schema` — Claude will produce:
-- `schema.sql` — all tables, constraints, RLS policies, Postgres functions
-- `seed.sql` — sample data for every flow
+**7. Run `/schema`**
 
-Paste both into the **Supabase SQL Editor** and run them.
+- Claude produces `schema.sql` and `seed.sql`
+- Paste both into the Supabase SQL Editor and run them
 
-Then add the type generation script to `package.json`:
+**8. Generate types**
+
+- Add to `package.json`:
+
 ```json
 "types": "supabase gen types typescript --project-id [project-id] > app/types/database.ts"
 ```
 
-Run `npm run types` to populate `app/types/database.ts`.
+```bash
+npm run types
+```
+
+**9. Connect your services**
+
+- Create a project in [Supabase](https://supabase.com)
+- Create a project in [Vercel](https://vercel.com) and connect the repo
+- Add to `.env.local` and Vercel:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+**10. Run `/auth`**
+
+- Sets up email + password auth end to end
+
+```bash
+npm run dev
+```
+
+- Open `localhost:3000` — confirm zero errors before moving on
 
 ---
 
-## Step 3 — Deployment Scaffold _(15 min mark)_
+## Phase 4: Build
 
-1. Confirm the project is in a public GitHub repo
-2. Create a new project in [Vercel](https://vercel.com) and connect the repo
-3. Create a new project in [Supabase](https://supabase.com)
-4. Add environment variables to `.env.local`:
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=
-   ```
-5. Add the same env vars to Vercel
+**11. Run `/readpath`**
 
----
+- Claude builds the primary screen as a server component with real Supabase data
+- Don't move on until you see real data in the browser
 
-## Step 4 — Auth _(15 min mark)_
+**12. Run `/writepath`**
 
-Run `/auth` — Claude will:
-1. Install `@supabase/supabase-js` and `@supabase/ssr`
-2. Create browser and server Supabase clients
-3. Build a simple email + password login page
-4. Set up middleware to refresh sessions
-
-Verify: `npm run dev` → open `localhost:3000` → confirm zero errors.
-
----
-
-## Step 5 — Main Read Path
-
-Run `/readpath` — Claude will build the primary screen as a server component querying Supabase directly.
-
-**Stop here until real data appears in the browser.** Do not write the write path until this works.
-
----
-
-## Step 6 — Main Write Path
-
-Run `/writepath` — Claude will build the server action for your primary mutation and wire up the form.
-
-**Verify:** Submit the form → open Supabase table editor → confirm the row exists → return to browser and confirm it renders.
+- Claude builds the server action for your primary mutation and wires up the form
+- Submit the form → open Supabase table editor → confirm the row exists → confirm it renders in the browser
 
 ---
 
 ## ⭐ Milestone _(35 min mark)_
 
-Run `/milestone` — Claude will assess whether the read and write paths both work and flag anything to cut.
+**13. Run `/milestone`**
 
-> If you're not here by 35 minutes, cut scope. A working app with fewer features beats a broken app with all features.
+- Claude checks whether read and write paths work, and flags what to cut
 
----
-
-## Step 7 — Secondary Surfaces
-
-Build secondary screens and features. The core is confirmed, so this moves fast.
-
-If you touch the DB schema at any point during this step, run `/types` immediately after.
+> If you're not here by 35 minutes, cut something. A working app with less does more than a broken app with everything.
 
 ---
 
-## Step 8 — Styling + Walkthrough _(60 min mark)_
+## Phase 5: Ship _(60 min mark)_
 
-Run `/ship` — Claude will do one pass of CSS modules and walk through every user flow.
+**14. Build secondary screens**
 
-Rules:
-- No new features
-- No component library — simple CSS modules only
-- If something is broken and takes more than 5 minutes to fix, cut it
+- Run `/readpath` and `/writepath` for secondary surfaces
+- Run `/types` any time you touch the schema
+
+**15. Run `/ship`**
+
+- One pass of CSS modules — layout, typography, color
+- Walk every user flow
+- No new features, no component libraries
+- If something takes more than 5 minutes to fix, cut it
