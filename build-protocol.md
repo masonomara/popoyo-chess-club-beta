@@ -1,18 +1,28 @@
 # Full Stack Web App Build Protocol
 
----
-
 ## I. Project Setup
 
-### 1. Confirm project prerequisites are installed
+### 1. Confirm that all project prerequisites are installed
+
+**Why:** This project uses specific CLI tools. The concepts itn the tutorial are applicable to any CLI-based coding agent (Codex, Gemini), but theese are the tools this tutorial uses.
+
+**How:** Verify each of the following is installed and authenticated:
 
 - [Node.js](https://nodejs.org) (v18+)
 - [GitHub CLI](https://cli.github.com) — run `gh auth login` to authenticate
 - [Claude Code](https://claude.ai/code)
-- A [Vercel](https://vercel.com) account
-- A [Supabase](https://supabase.com) account
+- [Vercel](https://vercel.com) account
+- [Supabase](https://supabase.com) account
+- [Context7 MCP](https://context7.com) (optional)
 
-### 2. Clone project scaffold and create GitHub repo
+**Learn More:** [Why Context7?](#why-context7)
+
+
+### 2. Clone the project template and create a new GitHub repo
+
+**Why:** The tempalte gives you a pre-configured starting point including this protocol, spec file tempaltes, Claude commands, CLAUDE.md, etc.
+
+**How:**
 
 ```bash
 git clone https://github.com/masonomara/60-minute-build [project-name]
@@ -21,27 +31,36 @@ git remote remove origin
 gh repo create [project-name] --public --source=. --push
 ```
 
-### 3. Create the Next.js app
+### 3. Create Next.js app with the recommended project settings
+
+**Why:** These settings (TypeScript, ESLint, App Router, React Compiler, no Tailwind, no `src/` dir) are either best practices or personal preferences. The following three decisions are perosnal preferences, feel free to change them, they wont make much of a difference: I find Tailwind CSS becomes convulted. I dont think a src/ direcotry is neccesary for this proejcts scope, and for the AGENTS.md i refer to control all the context.
+
+**How:**
 
 ```bash
 npx create-next-app@latest .
 ```
 
-Use these Next.js settings:
+When prompted, use these selections:
 
-```bash
+```
 Would you like to use the recommended Next.js defaults? › No, customize settings
-Would you like to use TypeScript? … Yes
+Would you like to use TypeScript? › Yes
 Which linter would you like to use? › ESLint
-Would you like to use React Compiler? … Yes
-Would you like to use Tailwind CSS? … No
-Would you like your code inside a `src/` directory? … No
-Would you like to use App Router? (recommended) … Yes
-Would you like to customize the import alias (`@/*` by default)? … No
-Would you like to include AGENTS.md to guide coding agents to write up-to-date Next.js code? › No
+Would you like to use React Compiler? › Yes
+Would you like to use Tailwind CSS? › No
+Would you like your code inside a src/ directory? › No
+Would you like to use App Router? › Yes
+Would you like to customize the import alias? › No
+Would you like to include AGENTS.md? › No
 ```
 
-### 4. Commit and push
+**Learn More:** [Next.js Installation](https://nextjs.org/docs/getting-started/installation)
+
+### 4. Commit and push the initial Next.js setup
+
+**Why:** Establishes a clean baseline before any app-specific code is added.
+**How:**
 
 ```bash
 git add .
@@ -49,126 +68,58 @@ git commit -m "init"
 git push origin main
 ```
 
-### 5. Set up project in Vercel
+### 5. Setup and deploy the project to Vercel
 
-- Log in to [Vercel](https://vercel.com)
-- Click **Add New Project**
-- Import Git repository
-- Application preset should be **Next.js**
-- Click **Deploy**
-- Click **Continue to Dashboard**
+**Why:** Vercel is the native deployment target for Next.js. It gives you a live URL and a CI pipeline so every push to `main` auto-deploys.
 
-### 6. Set up Supabase
+**How:**
 
-- In Vercel, go to **Storage**
-- Click **Create Database**
-- Select **Supabase** from Marketplace Database Providers
-- Click **Continue**
-- Change the resource name to `supabase-[project-name]`
-- Click **Create** → **Continue** → **Connect**
-- Copy the secrets from the **Quickstart** section into your `.env.local` file
+1. Log in to [Vercel](https://vercel.com)
+2. Click **Add New Project**
+3. Import your GitHub repository
+4. Confirm the preset is **Next.js**
+5. Click **Deploy** → **Continue to Dashboard**
+
+### 6. Create and connect a Supabase database through Vercel
+
+**Why:** Provisioning Supabase through Vercel's marketplace automatically injects the required environment variables into your Vercel project and keeps the projects synced
+
+**How:**
+
+1. In Vercel, go to **Storage**
+2. Click **Create Database**
+3. Select **Supabase** from Marketplace Database Providers
+4. Click **Continue**
+5. Name the resource `supabase-[project-name]`
+6. Click **Create** → **Continue** → **Connect**
+7. Copy the secrets from the **Quickstart** section into your `.env.local` file
 
 See `.env.local.example` for the expected keys.
 
-### Checkpoint
+**Learn More:** [Supabase + Vercel Integration](https://supabase.com/docs/guides/getting-started/quickstarts/nextjs)
 
-- [ ] Repo is live on GitHub
-- [ ] `CLAUDE.md` is at the project root
-- [ ] `docs/goal.md` is present
-- [ ] `.claude/commands/` is present
-- [ ] Vercel project deployed
-- [ ] Supabase connected via Vercel Storage
-- [ ] `.env.local` populated with secrets
+## Learn More
 
-## Phase 2: Plan _(5 min mark)_
+### Why no separate backend?
 
-**5. Write your goal**
+Server actions query Supabase directly from the server, so there's no need for a separate API layer. You get type-safe DB access, RLS enforcement, and no extra network hop. A dedicated backend only makes sense if you have complicated webhooks, third-party integrations, or logic that doesn't fit as a Postgres function.
 
-- Open `docs/goal.md` and fill in: Context, Users, Flows, Screens, Success, Key Mutations
-- Keep it short — this is a spec, not an essay
+### Why server components for reads?
 
-**6. Run `/plan`**
+Server components query Supabase directly on the server and stream HTML to the client — no client hooks, no loading states, no extra round trips. Client components are reserved for anything that requires interactivity or a live connection (realtime subscriptions, forms).
 
-- Claude reads `docs/goal.md` and produces a build plan: first screen, primary mutation, what to cut
+### Why RLS instead of app-level auth checks?
 
----
+Row Level Security enforces access rules at the database layer, so they can't be bypassed by application bugs. Every table gets its own policies — who can select, insert, update, delete. If a server action has a bug, Supabase still won't return rows the user isn't allowed to see.
 
-## Phase 3: Architecture _(15 min mark)_
+### Why Postgres functions for complex mutations?
 
-**7. Run `/schema`**
+Postgres functions let you bundle multiple SQL operations into a single RPC call, keeping the logic close to the data and reducing round trips. Use them when a mutation touches multiple tables or needs to run atomically.
 
-- Claude produces `schema.sql` and `seed.sql`
-- Paste both into the Supabase SQL Editor and run them
+### Why realtime subscriptions must live in client components?
 
-**8. Generate types**
+Realtime is a WebSocket connection — it has to be established from the browser. A server component renders once and is done. Client components stay mounted and can maintain the socket, receive pushes from Supabase, and re-render when data changes.
 
-- Add to `package.json`:
+### Why generated types instead of Zod for your own DB?
 
-```json
-"types": "supabase gen types typescript --project-id [project-id] > app/types/database.ts"
-```
-
-```bash
-npm run types
-```
-
-**9. Connect your services**
-
-- Create a project in [Supabase](https://supabase.com)
-- Create a project in [Vercel](https://vercel.com) and connect the repo
-- Add to `.env.local` and Vercel:
-
-```bash
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-```
-
-**10. Run `/auth`**
-
-- Sets up email + password auth end to end
-
-```bash
-npm run dev
-```
-
-- Open `localhost:3000` — confirm zero errors before moving on
-
----
-
-## Phase 4: Build
-
-**11. Run `/readpath`**
-
-- Claude builds the primary screen as a server component with real Supabase data
-- Don't move on until you see real data in the browser
-
-**12. Run `/writepath`**
-
-- Claude builds the server action for your primary mutation and wires up the form
-- Submit the form → open Supabase table editor → confirm the row exists → confirm it renders in the browser
-
----
-
-## ⭐ Milestone _(35 min mark)_
-
-**13. Run `/milestone`**
-
-- Claude checks whether read and write paths work, and flags what to cut
-
-> If you're not here by 35 minutes, cut something. A working app with less does more than a broken app with everything.
-
----
-
-## Phase 5: Ship _(60 min mark)_
-
-**14. Build secondary screens**
-
-- Run `/readpath` and `/writepath` for secondary surfaces
-- Run `/types` any time you touch the schema
-
-**15. Run `/ship`**
-
-- One pass of CSS modules — layout, typography, color
-- Walk every user flow
-- No new features, no component libraries
-- If something takes more than 5 minutes to fix, cut it
+Supabase generates TypeScript types directly from your schema. Those types are the contract. Wrapping them in Zod would just duplicate the schema in a second place that can drift. Use Zod only at system boundaries — user-submitted form fields and external API responses — where you don't control the shape of the data.

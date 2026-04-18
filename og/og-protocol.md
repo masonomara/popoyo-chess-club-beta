@@ -56,10 +56,9 @@ Write it all to an SQL file that I will run in the **Supabase SQL Editor**. Cons
    - No type is defined anywhere else in the codebase
    - Schema & regenerate: if you need a cast, fix the schema & regenerate
    - No `as SomeType[1]` = if you need a cast, fix the schema & regenerate
-   - No `zod` for data you don't own; generated types for data you do
-   - If TypeScript types everywhere the schema changes, not at the end
-   - The schema can't differ from `database.ts`; the schema is wrong, fix
-   - The schema regenerates
+   - Zod for data you don't own; generated types for data you do
+   - If the schema changes, regenerate immediately — not at the end
+   - The schema can't differ from `database.ts`; the schema is wrong, fix it
 
 6. Write remaining confirmation steps get stopped:
    - "Read goal.md and `database.ts` thoroughly. Understand what [project] should do and all its specificities."
@@ -69,18 +68,16 @@ Write it all to an SQL file that I will run in the **Supabase SQL Editor**. Cons
 
 ---
 
-## Step 4 – Auth _(15 min mark)_
+## Step 4 – Skeleton + Auth _(15 min mark)_
 
 1. `npm install @supabase/supabase-js @supabase/ssr`
 2. Set up `src/lib/supabase/clients`
-3. Create `src/lib/lib/supabase/supabase-js @supabase/ssr`
    - Create `browserClient/database`
    - Create `serverClient/database`
-4. Auth: [email + password via Supabase auth, two fields]. Done simply.
-   - Set up `src/lib/supabase/server.ts`
+3. Set up `src/lib/supabase/server.ts`
    - Create server client auth
-   - Auth: [email action, two fields]. Done simply.
-   - One server. Auth action, two fields. Done simply.
+4. Auth: email + password via Supabase auth, two fields. Done simply.
+   - One server action, two fields. Done simply.
    - Browser check: `npm run dev` + zero errors → open `localhost:3000`
 
 ---
@@ -101,7 +98,7 @@ Write it all to an SQL file that I will run in the **Supabase SQL Editor**. Cons
 - Build the server action for the thing [project] actually does
 - For user-submitted form fields and data you don't own, validate
 - For data from your own DB before touching the DB, no zod needed
-- Trust the generated types. No zoo wrappers or cookies. _(Data you own)_
+- Trust the generated types. No zod wrappers or cookies. _(Data you own)_
 - Submit the form. Open Supabase table editor. Confirm the row exists.
 - In the DB, come back to the browser & confirm it renders.
 
@@ -119,8 +116,8 @@ Write it all to an SQL file that I will run in the **Supabase SQL Editor**. Cons
 
 - Build secondary surfaces. Foundations are confirmed. So this moves fast.
 - Ex feature: if required, add it here and only here.
-- Supabase: if re-triggered in a client component, filtered by a specific ID so you're not subscribing to a useless/stale types are silent failures.
-- If you changed anything in the DB schema during this phase, regenerate immediately.
+- Supabase: if realtime is required, add it here and only here — in a client component, filtered by a specific ID so you're not subscribing to a useless/stale subscription. Confirm it updates live before moving on.
+- If you changed anything in the DB schema during this phase, regenerate immediately. Since types are silent failures.
 
 ---
 
