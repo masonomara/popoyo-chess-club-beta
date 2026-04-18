@@ -78,7 +78,7 @@ Fill in Step 4 and Step 6 with content specific to this project — drawn from t
 
 [Fill in each secondary screen and feature from `docs/01-goal.md` as a sub-item. Be specific — use actual screen names and actual type names from `app/types/database.ts`.]
 
-**Schema change protocol:** If any step in this phase requires a schema change — update `docs/schema.sql`, re-run in Supabase SQL Editor, then run `npm run gen:types` immediately. Never defer type regeneration.
+**Schema change protocol:** If any step in this phase requires a schema change — update `docs/schema.sql`, re-run in Supabase SQL Editor, then run `npm run types` immediately. Never defer type regeneration.
 
 ---
 
