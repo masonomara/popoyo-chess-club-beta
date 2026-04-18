@@ -9,6 +9,8 @@
 - [Node.js](https://nodejs.org) (v18+)
 - [GitHub CLI](https://cli.github.com) — run `gh auth login` to authenticate
 - [Claude Code](https://claude.ai/code)
+- A [Vercel](https://vercel.com) account
+- A [Supabase](https://supabase.com) account
 
 ### 2. Clone project scaffold and create GitHub repo
 
@@ -47,14 +49,36 @@ git commit -m "init"
 git push origin main
 ```
 
+### 5. Set up project in Vercel
+
+- Log in to [Vercel](https://vercel.com)
+- Click **Add New Project**
+- Import Git repository
+- Application preset should be **Next.js**
+- Click **Deploy**
+- Click **Continue to Dashboard**
+
+### 6. Set up Supabase
+
+- In Vercel, go to **Storage**
+- Click **Create Database**
+- Select **Supabase** from Marketplace Database Providers
+- Click **Continue**
+- Change the resource name to `supabase-[project-name]`
+- Click **Create** → **Continue** → **Connect**
+- Copy the secrets from the **Quickstart** section into your `.env.local` file
+
+See `.env.local.example` for the expected keys.
+
 ### Checkpoint
 
 - [ ] Repo is live on GitHub
 - [ ] `CLAUDE.md` is at the project root
 - [ ] `docs/goal.md` is present
 - [ ] `.claude/commands/` is present
-
----
+- [ ] Vercel project deployed
+- [ ] Supabase connected via Vercel Storage
+- [ ] `.env.local` populated with secrets
 
 ## Phase 2: Plan _(5 min mark)_
 
