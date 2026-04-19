@@ -21,7 +21,7 @@
 
 ### 2. Clone the project template and create a new GitHub repo
 
-**Why:** The template gives you a pre-configured starting point including this protocol, spec file templates, Claude commands, CLAUDE.md, etc.
+**Why:** The template provides a pre-configured starting point including this protocol, spec file templates, Claude commands, and `CLAUDE.md`
 
 **How:**
 
@@ -32,13 +32,13 @@ git remote remove origin
 gh repo create [project-name] --public --source=. --push
 ```
 
-### 3. Create Next.js app with the recommended project settings
+### 3. Create a Next.js app with the recommended project settings
 
-**Why:** TypeScript, ESLint, App Router, and React Compiler are default recommendations. Everything else is a personal recommendations::
+**Why:** TypeScript, ESLint, App Router, and React Compiler are default recommendations. Everything else is a personal recommendation:
 
 - **CSS Modules over Tailwind** — Tailwind becomes convoluted at scale
 - **No `src/` directory** — unnecessary indirection for this scope
-- **No `AGENTS.md`** — CLAUDE.md handles all context
+- **No `AGENTS.md`** — `CLAUDE.md` handles all context
 
 **How:**
 
@@ -74,9 +74,9 @@ git commit -m "init"
 git push origin main
 ```
 
-### 5. Set up and deploy the project to Vercel
+### 5. Deploy the project to Vercel
 
-**Why:** Vercel is the native deployment target for Next.js. It gives you a live URL and a CI pipeline so every push to `main` auto-deploys.
+**Why:** Vercel is the native deployment target for Next.js. Every push to `main` auto-deploys, giving you a live URL and a CI pipeline.
 
 **How:**
 
@@ -88,13 +88,13 @@ git push origin main
 
 ### 6. Create and connect a Supabase database
 
-**Why:** Connecting Supabase through Vercel automatically injects the required environment variables into your Vercel project and keeps both platforms synced.
+**Why:** Connecting Supabase through Vercel automatically injects the required environment variables into your project and keeps both platforms in sync.
 
 **How:**
 
 1. In your Vercel project dashboard, go to the **Storage** tab
 2. Click **Create Database** (or **Connect Store**)
-3. Select **Supabase** — it may appear under a "Marketplace Data Providers" or "Neon / Supabase" section depending on your plan
+3. Select **Supabase**
 4. Name the resource `supabase-[project-name]`
 5. Follow the prompts to create and connect the database (Click **Create** → **Continue** → **Connect**)
 6. Copy the secrets from the **Quickstart** section into your `.env.local` file
@@ -105,7 +105,7 @@ See `.env.local.example` for the expected keys.
 
 ### 7. Add `SUPABASE_PROJECT_ID` to `.env.local` and the `types` script to `package.json`
 
-**Why:** Type generation must be a reproducible, one-command operation. The script reads your project ID from `.env.local` so it's consistent everywhere — protocol, commands, and CI.
+**Why:** Type generation must be a one-command operation. The script reads your project ID from `.env.local` so it works consistently everywhere — protocol, commands, and CI.
 
 **How:**
 
@@ -116,7 +116,7 @@ See `.env.local.example` for the expected keys.
 SUPABASE_PROJECT_ID=your-project-id-here
 ```
 
-3. In `package.json`, add to the `scripts` object:
+3. Add to the `scripts` object in `package.json`:
 
 ```json
 "types": "npx --yes supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > app/types/database.ts"
@@ -128,7 +128,7 @@ SUPABASE_PROJECT_ID=your-project-id-here
 npm run types
 ```
 
-`app/types/database.ts` will be empty until you run the schema in Supabase — that's expected.
+`app/types/database.ts` will be empty until you run the schema in Supabase.
 
 ---
 
@@ -136,18 +136,18 @@ npm run types
 
 ### 8. Fill out `docs/01-goal.md` before writing any code
 
-**Why:** Claude reads `docs/01-goal.md` before doing anything. Writing this first forces you to make every structural decision — roles, flows, screens, mutations — before any code exists to lock you in. Budget 5–10 minutes. Aim for ~1000 words. The more specific you are, the less you course-correct later.
+**Why:** Claude reads `docs/01-goal.md` before doing anything. Writing it first forces every structural decision — roles, flows, screens, mutations — before any code exists to lock you in. Budget 5–10 minutes. Aim for ~1000 words. The more specific you are, the less you course-correct later.
 
-**How:** Open `docs/01-goal.md` and fill in the template's sections, including:
+**How:** Open `docs/01-goal.md` and fill in the template sections:
 
-1. **Project Context** — What is this app, why does it exist, what problem does it solve?
-2. **User Roles** — Who uses the app? For each role: how they get access, what they can do, what they cannot do.
-3. **User Flows** — The 2–3 core things a user does, step by step. Start from the trigger, end at the outcome.
-4. **Screens** — Every screen with a one-line description of what it shows and does.
+1. **Project Context** — What is this app? Why does it exist? What problem does it solve?
+2. **User Roles** — Who uses the app? For each role: how they get access, what they can do, what they cannot.
+3. **User Flows** — The 2–3 core things a user does, step by step. Start from the trigger; end at the outcome.
+4. **Screens** — Every screen with a description of what it shows and what actions it supports.
 5. **Success State** — 2–3 concrete, observable things you can check to confirm the app works.
 6. **Key Mutations** — Every write to the database (create, update, delete), one line each.
 
-Add sections whenever your project requires them. Common additions:
+Add sections when the project demands them:
 
 - **Business Rules** — invariants and edge cases
 - **Constraints** — what the system must enforce
@@ -158,7 +158,7 @@ Add sections whenever your project requires them. Common additions:
 
 Be as specific as the project demands.
 
-### 9. Run `/schema` to generate the complete database architecture
+### 9. Run `/schema` to generate the database schema
 
 **Why:** The schema is the contract. Everything downstream — queries, server actions, UI — derives from it. `app/types/database.ts` is generated from the schema and is the single source of truth for all types. If code needs a cast, the schema is wrong — fix the schema, not the code. Complete this step before writing any application code.
 
@@ -171,7 +171,7 @@ Be as specific as the project demands.
 ```
 
 2. Claude generates `docs/schema.sql`
-3. Open the [Supabase SQL Editor](https://supabase.com/dashboard) in your Supabase project, copy, paste, and run `schema.sql`
+3. In the [Supabase SQL Editor](https://supabase.com/dashboard), copy, paste, and run `schema.sql`
 4. Generate `app/types/database.ts`:
 
 ```bash
@@ -197,21 +197,23 @@ npm run types
 
 ### 10. Run `/plan` to generate the build plan
 
-**Why:** With `docs/01-goal.md` and `app/types/database.ts` both complete, Claude has everything it needs — the goal, the schema, and the generated types — to research the stack and write a build plan tailored to this specific project. Running `/plan` before this point produces a generic plan. Running it after produces one that knows your tables, your roles, and your mutation surface.
+**Why:** With `docs/01-goal.md` and `app/types/database.ts` complete, Claude has everything it needs — the goal, the schema, and the generated types — to produce a build plan tailored to this project. Running `/plan` before this point produces a generic plan; running it after produces one that knows your tables, your roles, and your mutation surface.
 
-**How:** In the Claude Code chat, type:
+**How:** In the Claude Code chat, run:
 
-```text
+```
 /plan
 ```
 
-Claude reads `docs/01-goal.md` and `app/types/database.ts`, researches Next.js and Supabase via context7, and produces `docs/02-plan.md`. Review the plan before starting Phase 3. Each step identifies what gets built, who does it (you or Claude), and what the confirmation looks like.
+Claude reads `docs/01-goal.md` and `app/types/database.ts`, researches Next.js and Supabase via Context7, and produces `docs/02-plan.md`. Review the plan before starting Phase 3. Each step identifies what gets built, who does it, and what the confirmation looks like.
+
+---
 
 ## Learn More
 
 ### Why no separate backend?
 
-Server actions query Supabase directly from the server, so there's no need for a separate API layer. You get type-safe DB access, RLS enforcement, and no extra network hop. A dedicated backend only makes sense if you have complicated webhooks, third-party integrations, or logic that doesn't fit as a Postgres function.
+Server actions query Supabase directly from the server, so there's no need for a separate API layer. You get type-safe database access, RLS enforcement, and no extra network hop. A dedicated backend only makes sense for complex webhooks, third-party integrations, or logic that doesn't fit as a Postgres function.
 
 ### Why server components for reads?
 
@@ -219,16 +221,16 @@ Server components query Supabase directly on the server and stream HTML to the c
 
 ### Why RLS instead of app-level auth checks?
 
-Row Level Security enforces access rules at the database layer, so they can't be bypassed by application bugs. Every table gets its own policies — who can select, insert, update, delete. If a server action has a bug, Supabase still won't return rows the user isn't allowed to see.
+Row Level Security enforces access rules at the database layer, where they cannot be bypassed by application bugs. Every table gets its own policies — who can select, insert, update, delete. If a server action has a bug, Supabase still won't return rows the user isn't allowed to see.
 
 ### Why Postgres functions for complex mutations?
 
-Postgres functions let you bundle multiple SQL operations into a single RPC call, keeping the logic close to the data and reducing round trips. Use them when a mutation touches multiple tables or needs to run atomically.
+Postgres functions bundle multiple SQL operations into a single RPC call, keeping logic close to the data and reducing round trips. Use them when a mutation touches multiple tables or must run atomically.
 
 ### Why realtime subscriptions must live in client components?
 
-Realtime is a WebSocket connection — it has to be established from the browser. A server component renders once and is done. Client components stay mounted and can maintain the socket, receive pushes from Supabase, and re-render when data changes.
+Realtime is a WebSocket connection — it must be established from the browser. A server component renders once and is done. Client components stay mounted, maintain the socket connection, receive pushes from Supabase, and re-render when data changes.
 
-### Why generated types instead of Zod for your own DB?
+### Why generated types instead of Zod for your own database?
 
-Supabase generates TypeScript types directly from your schema. Those types are the contract. Wrapping them in Zod would just duplicate the schema in a second place that can drift. Use Zod only at system boundaries — user-submitted form fields and external API responses — where you don't control the shape of the data.
+Supabase generates TypeScript types directly from your schema. Those types are the contract. Wrapping them in Zod would duplicate the schema in a second place that can drift. Use Zod only at system boundaries — user-submitted form fields and external API responses — where you don't control the shape of the data.
