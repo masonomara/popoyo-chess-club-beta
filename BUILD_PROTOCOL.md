@@ -6,7 +6,7 @@
 
 ### 1. Confirm that all project prerequisites are installed
 
-**Why:** This project uses specific CLI tools. The concepts itn the tutorial are applicable to any CLI-based coding agent (Codex, Gemini), but theese are the tools this tutorial uses.
+**Why:** This project uses specific CLI tools. The concepts in the tutorial are applicable to any CLI-based coding agent (Codex, Gemini), but these are the tools this tutorial uses.
 
 **How:** Verify each of the following is installed and authenticated:
 
@@ -17,11 +17,11 @@
 - [Supabase](https://supabase.com) account
 - [Context7 MCP](https://context7.com) (optional)
 
-**Learn More:** [Why Context7?](#why-context7)
+**Learn More:** [Why Context7?](https://www.youtube.com/watch?v=BJX6uJHIz5U)
 
 ### 2. Clone the project template and create a new GitHub repo
 
-**Why:** The tempalte gives you a pre-configured starting point including this protocol, spec file tempaltes, Claude commands, CLAUDE.md, etc.
+**Why:** The template gives you a pre-configured starting point including this protocol, spec file templates, Claude commands, CLAUDE.md, etc.
 
 **How:**
 
@@ -34,7 +34,11 @@ gh repo create [project-name] --public --source=. --push
 
 ### 3. Create Next.js app with the recommended project settings
 
-**Why:** These settings (TypeScript, ESLint, App Router, React Compiler, no Tailwind, no `src/` dir) are either best practices or personal preferences. The following three decisions are perosnal preferences, feel free to change them, they wont make much of a difference: I find Tailwind CSS becomes convulted. I dont think a src/ direcotry is neccesary for this proejcts scope, and for the AGENTS.md i refer to control all the context.
+**Why:** TypeScript, ESLint, App Router, and React Compiler are default recommendations. Everything else is a personal recommendations::
+
+- **CSS Modules over Tailwind** — Tailwind becomes convoluted at scale
+- **No `src/` directory** — unnecessary indirection for this scope
+- **No `AGENTS.md`** — CLAUDE.md handles all context
 
 **How:**
 
@@ -61,6 +65,7 @@ Would you like to include AGENTS.md? › No
 ### 4. Commit and push the initial Next.js setup
 
 **Why:** Establishes a clean baseline before any app-specific code is added.
+
 **How:**
 
 ```bash
@@ -69,7 +74,7 @@ git commit -m "init"
 git push origin main
 ```
 
-### 5. Setup and deploy the project to Vercel
+### 5. Set up and deploy the project to Vercel
 
 **Why:** Vercel is the native deployment target for Next.js. It gives you a live URL and a CI pipeline so every push to `main` auto-deploys.
 
@@ -81,37 +86,43 @@ git push origin main
 4. Confirm the preset is **Next.js**
 5. Click **Deploy** → **Continue to Dashboard**
 
-### 6. Create and connect a Supabase database through Vercel
+### 6. Create and connect a Supabase database
 
-**Why:** Provisioning Supabase through Vercel's marketplace automatically injects the required environment variables into your Vercel project and keeps the projects synced
+**Why:** Connecting Supabase through Vercel automatically injects the required environment variables into your Vercel project and keeps both platforms synced.
 
 **How:**
 
-1. In Vercel, go to **Storage**
-2. Click **Create Database**
-3. Select **Supabase** from Marketplace Database Providers
-4. Click **Continue**
-5. Name the resource `supabase-[project-name]`
-6. Click **Create** → **Continue** → **Connect**
-7. Copy the secrets from the **Quickstart** section into your `.env.local` file
+1. In your Vercel project dashboard, go to the **Storage** tab
+2. Click **Create Database** (or **Connect Store**)
+3. Select **Supabase** — it may appear under a "Marketplace Data Providers" or "Neon / Supabase" section depending on your plan
+4. Name the resource `supabase-[project-name]`
+5. Follow the prompts to create and connect the database (Click **Create** → **Continue** → **Connect**)
+6. Copy the secrets from the **Quickstart** section into your `.env.local` file
 
 See `.env.local.example` for the expected keys.
 
 **Learn More:** [Supabase + Vercel Integration](https://supabase.com/docs/guides/getting-started/quickstarts/nextjs)
 
-### 7. Add the `types` script to `package.json`
+### 7. Add `SUPABASE_PROJECT_ID` to `.env.local` and the `types` script to `package.json`
 
-**Why:** Type generation must be a reproducible, one-command operation. Adding it manually now means it's always available and doesn't depends on Claude to set it up correctly.
+**Why:** Type generation must be a reproducible, one-command operation. The script reads your project ID from `.env.local` so it's consistent everywhere — protocol, commands, and CI.
 
-**How:** In `package.json`, add to the `scripts` object:
+**How:**
 
-```json
-"types": "npx --yes supabase gen types typescript --project-id YOUR_PROJECT_ID > app/types/database.ts"
+1. Find your project ID in the Supabase dashboard URL: `https://supabase.com/dashboard/project/[project-id]`
+2. Add it to `.env.local`:
+
+```
+SUPABASE_PROJECT_ID=your-project-id-here
 ```
 
-Replace `YOUR_PROJECT_ID` with the project ref from your Supabase dashboard URL: `https://supabase.com/dashboard/project/[project-id]`. This value is also in your `.env.local` as `SUPABASE_PROJECT_ID`.
+3. In `package.json`, add to the `scripts` object:
 
-Confirm it works:
+```json
+"types": "npx --yes supabase gen types typescript --project-id $SUPABASE_PROJECT_ID > app/types/database.ts"
+```
+
+4. Confirm it works:
 
 ```bash
 npm run types
@@ -136,11 +147,20 @@ npm run types
 5. **Success State** — 2–3 concrete, observable things you can check to confirm the app works.
 6. **Key Mutations** — Every write to the database (create, update, delete), one line each.
 
-Add additional sections whenever your project requires them. Common additions: **Business Rules** (invariants and edge cases), **Constraints** (what the system must enforce), **Sample Data** (representative rows with expected normalization), **Input Format** (form fields, toggles, dropdowns for complex inputs), **Algorithm** (ELO, ranking, scoring logic), **Key Server Functions** (non-trivial server-side operations). Be as specific as the project demands.
+Add sections whenever your project requires them. Common additions:
+
+- **Business Rules** — invariants and edge cases
+- **Constraints** — what the system must enforce
+- **Sample Data** — representative rows with expected normalization
+- **Input Format** — form fields, toggles, dropdowns for complex inputs
+- **Algorithm** — ELO, ranking, scoring logic
+- **Key Server Functions** — non-trivial server-side operations
+
+Be as specific as the project demands.
 
 ### 9. Run `/schema` to generate the complete database architecture
 
-**Why:** The schema is the contract. Everything downstream — queries, server actions, UI — derives from it. `app/types/database.ts` is generated from the schema and is the single source of truth for all types in the codebase. No type is defined anywhere else. If code needs a cast, the schema is wrong — fix the schema, not the code. This step must be completed in full before any application code is written.
+**Why:** The schema is the contract. Everything downstream — queries, server actions, UI — derives from it. `app/types/database.ts` is generated from the schema and is the single source of truth for all types. If code needs a cast, the schema is wrong — fix the schema, not the code. Complete this step before writing any application code.
 
 **How:**
 
@@ -160,7 +180,7 @@ npm run types
 
 **Learn More:** [Supabase Row Level Security](https://supabase.com/docs/guides/auth/row-level-security) · [Supabase Type Generation](https://supabase.com/docs/reference/cli/supabase-gen-types)
 
-### 8b. _(Optional)_ Run `/seed` to populate the database with sample data
+### 9b. _(Optional)_ Run `/seed` to populate the database with sample data
 
 **Why:** Seed data lets you see the app working immediately — real rows, real relationships, real state. Useful for development and demos. Skip if you prefer to add data manually or through the app.
 
@@ -179,9 +199,9 @@ npm run types
 
 **Why:** With `docs/01-goal.md` and `app/types/database.ts` both complete, Claude has everything it needs — the goal, the schema, and the generated types — to research the stack and write a build plan tailored to this specific project. Running `/plan` before this point produces a generic plan. Running it after produces one that knows your tables, your roles, and your mutation surface.
 
-**How:** In Claude Code, run:
+**How:** In the Claude Code chat, type:
 
-```
+```text
 /plan
 ```
 
