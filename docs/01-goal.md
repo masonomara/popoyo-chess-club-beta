@@ -1,34 +1,31 @@
 # [Project Name] Goal
 
-> Budget 5–10 minutes. Aim for ~1000 words. The more specific you are here, the less you course-correct later.
+> Budget 5–10 minutes. Aim for ~1000 words. The more specific, the better.
 >
-> Cover all six sections below. If your project requires more — a specific algorithm, business rules, sample data, input format, third-party integration, constraints — add a section for each.
+> Try to fill in all six sections below. Feel free to add more sections if your project demands it such as a specific algorithm, business rules, sample data, input format, third-party integration, constraints, etc.
 
 ## Project Context
 
-What exists today and what's broken or missing. What this app is, who it's for, and what problem it solves. Include the goal if it's distinct from the problem.
+What is this app, why does it need to exist, what problem does it solve? What already exists, whats broken or missing from the curretn solution? What does the app need to do?
 
 ## User Roles
 
-Who uses the app? For each role:
-- How they get access (e.g., manually seeded, invite, open signup)
-- What they can do
-- What they cannot do
+Who uses the app? For each type of user, describe how they enter the app, what they can do inside the app, maybe what they cannot do.
 
-Include account fields if the app has auth (email, password, display name, etc.).
+Include account fields such as email, password, display name, etc.
 
 ## User Flows
 
-The 2–3 core things a user does, step by step. Number each step. Start from the trigger (opening the app, clicking a button) and end at the outcome.
+The 2–3 core things each user us supposed to do, step by step. Start from the trigger (where tehy start when they enter the app, what buttosn they click) and end at the outcome. This is "what you want the user to do inside your app".
 
 ## Screens
 
-Every screen with a one-line description of what it shows and does. Include sub-details for any screen with a non-obvious UI (form fields, toggles, dropdowns, bottom sheets).
+List out every important screen with all key elements that are on the screen. Describe everything the user can do ont eh screen. Everything screen with a description of what it shows and what it does. Try to include details for every screen such as non-obvious UI (form fields, toggles, dropdowns, bottom sheets).
 
 ## Success State
 
-2–3 concrete, observable things you can check to confirm the app is working — not "it feels right," but "I submitted a game and the leaderboard updated."
+2–3 concrete, observable things you can check to confirm the app is working — not "it feels right," but "users submitted a message and the chat updates updated."
 
 ## Key Mutations
 
-Every write to the database — create, update, delete — one line each.
+Every important write to the database — create, update, delete
