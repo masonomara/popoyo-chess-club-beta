@@ -1,43 +1,16 @@
-# 60-Minute Build Protocol
+# Full Stack Web App Build Protocol
 
-A scaffold and step-by-step protocol for building a full-stack web app (Next.js + Supabase) in under 60 minutes — with Claude doing most of the work.
+A scaffold and step-by-step protocol for building a full-stack web app (Next.js + Supabase) in under 60 minutes.
 
 ## What's in this repo
 
-| File/Folder | Purpose |
-|---|---|
-| `build-protocol.md` | The full step-by-step build guide |
-| `CLAUDE.md` | Rules Claude follows on every project |
-| `docs/goal.md` | Goal doc template to fill out before starting |
-| `app/types/database.ts` | Placeholder for Supabase-generated types |
-| `.claude/commands/` | Slash commands — one per build step |
+- `BUILD_PROTOCOL.md` — full step-by-step build guide
+- `CLAUDE.md` — rules and constraints Claude follows
+- `docs/01-goal.md` — template to fill out before starting the build. Drives the plan, schema, and everything downstream
+- `app/types/database.ts` — single source of truth for all types, generated from Supabase after schema is set
+- `.claude/commands/` — slash commands called at each build step (`/plan`, `/schema`, `/seed`)
+- `.env.local.example` — environment variable template; copy to `.env.local` and fill in Supabase + any other keys
 
 ## How to use it
 
-1. Clone this repo into your new project folder: `git clone [repo] [project-name]`
-2. Run `npx create-next-app@latest .` — scaffold files are already there
-3. Create a new GitHub repo and push: `gh repo create [project-name] --public --push --source=.`
-4. Fill out `docs/goal.md`
-5. Follow `build-protocol.md` — use the slash commands at each step
-
-## The 8 Steps
-
-| Step | What | Target |
-|---|---|---|
-| 0 | Project setup | Before timer |
-| 1 | Goal + plan | 5 min |
-| 2 | Schema + types | 15 min |
-| 3 | Deployment scaffold | 15 min |
-| 4 | Auth | 15 min |
-| 5 | Main read path | — |
-| 6 | Main write path | — |
-| ⭐ | **Milestone** | **35 min** |
-| 7 | Secondary surfaces | — |
-| 8 | Styling + walkthrough | 60 min |
-
-## Stack
-
-- **Framework:** Next.js (App Router, TypeScript, no Tailwind)
-- **Database:** Supabase (Postgres + RLS + Auth)
-- **Deployment:** Vercel
-- **AI:** Claude Code with slash commands
+Clone this repo into your project folder, scaffold Next.js on top of it, and follow `BUILD_PROTOCOL.md`.
