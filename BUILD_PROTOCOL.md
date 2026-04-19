@@ -220,6 +220,12 @@ npm run types
 2. Claude reads `docs/01-goal.md`, `supabase/schema.sql`, and `app/types/database.ts`, researches Next.js and Supabase via Context7, and produces `docs/02-plan.md`
 3. Review the plan before writing any application code — each step identifies what gets built, who does it, and what the confirmation looks like
 
+> Note: Claude often mixes up the Next.js `middleware` file convention, which as been renamed to `proxy`. I recommend sendin Claude the following prompt to make sure everythign is correct:
+>
+> ```
+> Middleware has been renamed to Proxy. Read the following documentation: [Renaming Middleware to Proxy](https://nextjs.org/docs/messages/middleware-to-proxy) then address and update the document accordingly. don’t implement yet
+> ```
+
 ### 13. Annotate and adjust `docs/02-plan.md`
 
 **Why:** These notes correct assumptions, reject approaches, add constraints, or provide domain knowledge that Claude doesn’t have. Catching a wrong assumption here costs nothing; catching it mid-build costs hours.
