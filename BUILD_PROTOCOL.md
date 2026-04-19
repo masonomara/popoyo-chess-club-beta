@@ -144,7 +144,7 @@ npm install @supabase/supabase-js @supabase/ssr
 
 ## II. Architecture
 
-### 8. Fill out `docs/01-goal.md` before writing any code
+### 9. Fill out `docs/01-goal.md` before writing any code
 
 **Why:** Claude reads `docs/01-goal.md` before doing anything. Writing it first forces every structural decision — roles, flows, screens, mutations — before any code exists to lock you in. Budget 5–10 minutes. Aim for ~1000 words. The more specific you are, the less you course-correct later.
 
@@ -168,7 +168,7 @@ Add sections when the project demands them:
 
 Be as specific as the project demands.
 
-### 9. Run `/schema` to generate the database schema
+### 10. Run `/schema` to generate the database schema
 
 **Why:** The schema is the contract. Everything downstream — queries, server actions, UI — derives from it. `app/types/database.ts` is generated from the schema and is the single source of truth for all types. If code needs a cast, the schema is wrong — fix the schema, not the code. Complete this step before writing any application code.
 
@@ -190,7 +190,7 @@ npm run types
 
 **Learn More:** [Supabase Row Level Security](https://supabase.com/docs/guides/auth/row-level-security) · [Supabase Type Generation](https://supabase.com/docs/reference/cli/supabase-gen-types)
 
-### 9b. _(Optional)_ Run `/seed` to populate the database with sample data
+### 11. _(Optional)_ Run `/seed` to populate the database with sample data
 
 **Why:** Seed data lets you see the app working immediately — real rows, real relationships, real state. Useful for development and demos. Skip if you prefer to add data manually or through the app.
 
@@ -205,7 +205,7 @@ npm run types
 2. Claude generates `supabase/seed.sql`
 3. In the [Supabase SQL Editor](https://supabase.com/dashboard), run `seed.sql` after `schema.sql`
 
-### 10. Run `/plan` to generate the build plan
+### 11. Run `/plan` to generate the build plan
 
 **Why:** With `docs/01-goal.md` and `app/types/database.ts` complete, Claude has everything it needs — the goal, the schema, and the generated types — to produce a build plan tailored to this project. Running `/plan` before this point produces a generic plan; running it after produces one that knows your tables, your roles, and your mutation surface.
 
@@ -220,7 +220,7 @@ npm run types
 2. Claude reads `docs/01-goal.md`, `supabase/schema.sql`, and `app/types/database.ts`, researches Next.js and Supabase via Context7, and produces `docs/02-plan.md`
 3. Review the plan before writing any application code — each step identifies what gets built, who does it, and what the confirmation looks like
 
-### 11. Annotate and adjust `docs/02-plan.md`
+### 12. Annotate and adjust `docs/02-plan.md`
 
 **Why:** These notes correct assumptions, reject approaches, add constraints, or provide domain knowledge that Claude doesn’t have. Catching a wrong assumption here costs nothing; catching it mid-build costs hours.
 
@@ -242,7 +242,7 @@ npm run types
 I added a few notes to <document>, address all the notes and update the document accordingly. don’t implement yet
 ```
 
-### 12. Add a task list to `docs/02-plan.md`
+### 13. Add a task list to `docs/02-plan.md`
 
 **Why:** A checkable task list is a shared source of truth for implementation. Claude marks each task complete as it goes so you both always know where things stand.
 
@@ -256,7 +256,7 @@ Add a detailed task list to docs/02-plan.md covering every phase and individual 
 
 ## III. Implementation
 
-### 13. Build out each phase
+### 14. Build out each phase
 
 **Why:** One phase at a time keeps scope tight, creates a natural checkpoint after each phase, and prevents issues from compounding across phases.
 
@@ -267,6 +267,25 @@ Implement Phase [N] from docs/02-plan.md. When you finish a task, mark it as com
 ```
 
 After each phase, verify the confirmation criteria in the plan are met. Fix anything that doesn’t work before moving to the next phase. Repeat until all phases are complete.
+
+### 15. Launch
+
+**Why:** Local success is not the same as production success. Environment variables, build output, and RLS policies all behave differently on Vercel than they do against a local dev server.
+
+**How:**
+
+1. Push to `main`:
+
+```bash
+git add .
+git commit -m "complete"
+git push origin main
+```
+
+2. Open the Vercel dashboard and confirm the deployment completes without errors
+3. In the Vercel project settings, go to **Environment Variables** and confirm all required keys are present — the Supabase integration covers the DB vars, but any custom keys from `.env.local` must be added manually
+4. Open the live Vercel URL and walk through the full user journey: sign up, sign in, execute the core flow, confirm data appears in the Supabase table editor
+5. If anything fails, check **Vercel → Deployments → [latest] → Logs** for the error
 
 ---
 
