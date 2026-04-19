@@ -205,7 +205,7 @@ npm run types
 2. Claude generates `supabase/seed.sql`
 3. In the [Supabase SQL Editor](https://supabase.com/dashboard), run `seed.sql` after `schema.sql`
 
-### 11. Run `/plan` to generate the build plan
+### 12. Run `/plan` to generate the build plan
 
 **Why:** With `docs/01-goal.md` and `app/types/database.ts` complete, Claude has everything it needs — the goal, the schema, and the generated types — to produce a build plan tailored to this project. Running `/plan` before this point produces a generic plan; running it after produces one that knows your tables, your roles, and your mutation surface.
 
@@ -220,7 +220,7 @@ npm run types
 2. Claude reads `docs/01-goal.md`, `supabase/schema.sql`, and `app/types/database.ts`, researches Next.js and Supabase via Context7, and produces `docs/02-plan.md`
 3. Review the plan before writing any application code — each step identifies what gets built, who does it, and what the confirmation looks like
 
-### 12. Annotate and adjust `docs/02-plan.md`
+### 13. Annotate and adjust `docs/02-plan.md`
 
 **Why:** These notes correct assumptions, reject approaches, add constraints, or provide domain knowledge that Claude doesn’t have. Catching a wrong assumption here costs nothing; catching it mid-build costs hours.
 
@@ -242,7 +242,7 @@ npm run types
 I added a few notes to <document>, address all the notes and update the document accordingly. don’t implement yet
 ```
 
-### 13. Add a task list to `docs/02-plan.md`
+### 14. Add a task list to `docs/02-plan.md`
 
 **Why:** A checkable task list is a shared source of truth for implementation. Claude marks each task complete as it goes so you both always know where things stand.
 
@@ -256,7 +256,7 @@ Add a detailed task list to docs/02-plan.md covering every phase and individual 
 
 ## III. Implementation
 
-### 14. Build out each phase
+### 15. Build out each phase
 
 **Why:** One phase at a time keeps scope tight, creates a natural checkpoint after each phase, and prevents issues from compounding across phases.
 
@@ -268,7 +268,7 @@ Implement Phase [N] from docs/02-plan.md. When you finish a task, mark it as com
 
 After each phase, verify the confirmation criteria in the plan are met. Fix anything that doesn’t work before moving to the next phase. Repeat until all phases are complete.
 
-### 15. Launch
+### 16. Launch
 
 **Why:** Local success is not the same as production success. Environment variables, build output, and RLS policies all behave differently on Vercel than they do against a local dev server.
 
