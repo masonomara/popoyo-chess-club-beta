@@ -1,100 +1,19 @@
-Thoroughly read `docs/01-goal.md` and `app/types/database.ts` before doing anything else. Do not proceed until you have read and understood both documents completely. The goal doc defines what gets built. The types file defines the exact shape of every table, column, and function — every step in the plan must reference actual type names, not invented ones.
+We need to build an iterative, simple, and concise plan on how to build out the project. The plan must differentiate when something must be done manually (such as Supabase GUI) vs when you (Claude) will do something.
 
-## Your task
+Read `docs/01-goal.md`, `supabase/schema.sql`, and `app/types/database.ts` each in depth. Understand how each works deeply, what each does, and each of their specificities. Understand everything there is to know about all three completely. The goal doc defines what gets built. The schema defines the database structure and RLS rules. The types file defines the exact shape of every table, column, and function — every step in the plan must be based off these three files. Each step should demonstrate what gets built, who does it, and how to confirm it's working.
 
-Research the stack using context7, then write `docs/02-plan.md` — a scannable, iterative build plan tailored to this specific project.
+When that's done, research the technology stack further using Context7 to fetch current docs so you do not rely on training data for important conventions such as API signatures, package names, and configuration shapes.
 
----
+If any step requires a schema change — update `supabase/schema.sql`, re-run in Supabase SQL Editor, then run `npm run types` immediately. Never defer type regeneration. All steps are structural and should be written as shown, with project-specific details (table names, column names, mutation names) inserted where relevant. All content should be specific to this project — drawn from the actual screens, flows, roles, and type names in `docs/01-goal.md` and `app/types/database.ts`.
 
-## Step 1 — Research the stack
+Start with the project skeleton and auth. Set up `lib/supabase/client.ts` to export `createBrowserClient<Database>()` using `@supabase/ssr` and then set up `lib/supabase/server.ts` to export `createServerClient<Database>()` using `@supabase/ssr` with cookie handling. Keep auth simple — one server action, two fields: email and password, following Supabase SSR best practices. Run `npm run dev` — zero errors — then open `localhost:3000`. At the end of this step, a new user should be able to sign up, the user should appear in the Supabase Auth dashboard, sign in with the same credentials, and the session should persist on page refresh.
 
-Use context7 to pull current documentation for:
+Then, build out the main read path as confirmation that Next.js and Supabase are connected and real data is in the browser. Direct Supabase query using `createServerClient` — no client hooks, no abstractions, no loading states. All existing data for the core tables that should be on the home screen should be displayed as a server component that queries Supabase directly, rendering real rows from the database using the types in `app/types/database.ts`. No loading states, client hooks, or abstractions yet. By the end of this step, you should be able to open the app in the browser and see real rows from the seeded database visible on the screen. Do not write the next step until this one shows real data.
 
-- Next.js App Router — server components, server actions, routing conventions
-- Supabase SSR — `@supabase/ssr`, `createBrowserClient`, `createServerClient`, cookie handling, auth helpers
-- Any other library referenced in `docs/01-goal.md`
+Once the main read path is complete, focus on the main write path — build the server actions for the core mutation(s) identified in `docs/01-goal.md` implemented end-to-end. Use generated types are trusted directly — no Zod for data you own. At this point, you should be able to submit the form, open the Supabase table editor, and confirm the row exists. Then come back to the browser and confirm it renders.
 
-Do not rely on training data for API signatures, package names, or configuration shapes. Fetch current docs.
+Once the primary write path is complete, focus on the secondary surfaces, features, and mutations from `docs/01-goal.md`. Identify and focus on these features in this phase, and only this phase — use actual screen names and actual type names from `app/types/database.ts`. If a feature such as realtime is required, add it here and only here — in a client component, filtered by a specific ID so you're not subscribing to a useless/stale subscription. Confirm it updates live before moving on.
 
----
+After the secondary features are created, there should be one styling pass of layout, typography, and one accent color. No component library needed — use CSS modules, implement a simple design system. Goal is to make sure everything is coherent and readable.
 
-## Step 2 — Write `docs/02-plan.md`
-
-The plan must be scannable, not a novel. Each step: what gets built · who does it (User or Claude) · what the confirmation looks like. Use the exact structure below.
-
-Fill in Step 4 and Step 6 with content specific to this project — drawn from the actual screens, flows, roles, and type names in `docs/01-goal.md` and `app/types/database.ts`. Steps 1–3 and 5 are structural and should be written as shown, with project-specific details (table names, column names, mutation names) inserted where relevant.
-
----
-
-### Template for `docs/02-plan.md`
-
-```markdown
-# Build Plan
-
-> Generated from `docs/01-goal.md` and `app/types/database.ts`. Review before starting Phase 3.
->
-> Each step: what gets built · who does it · what confirms it's working.
-
----
-
-## 1. Skeleton + Auth
-
-**Claude builds:**
-
-- `lib/supabase/client.ts` — exports `createBrowserClient<Database>()` using `@supabase/ssr`
-- `lib/supabase/server.ts` — exports `createServerClient<Database>()` using `@supabase/ssr` with cookie handling
-- One auth server action with two fields: email and password
-- Sign-in and sign-up flows following Supabase SSR best practices
-
-**Confirmation:** Sign up a new user → user appears in Supabase Auth dashboard → sign in with same credentials → session persists on page refresh.
-
----
-
-## 2. Main Read Path
-
-**Claude builds:**
-
-- Home screen as a server component
-- Direct Supabase query using `createServerClient` — no client hooks, no abstractions, no loading states
-- Renders real rows from the database using the types in `app/types/database.ts`
-
-**Confirmation:** Open the app in the browser → real rows from the seeded database are visible on screen. Do not proceed to Step 3 until this is confirmed.
-
----
-
-## 3. Main Write Path
-
-**Claude builds:**
-
-- Server action for the core mutation identified in `docs/01-goal.md`
-- Form that calls the server action
-- Generated types are trusted directly — no Zod for data you own
-
-**Confirmation:** Submit the form → open Supabase table editor → new row exists → return to browser → row renders on screen.
-
----
-
-## 4. Secondary Surfaces + Features
-
-[Fill in each secondary screen and feature from `docs/01-goal.md` as a sub-item. Be specific — use actual screen names and actual type names from `app/types/database.ts`.]
-
-**Schema change protocol:** If any step in this phase requires a schema change — update `docs/schema.sql`, re-run in Supabase SQL Editor, then run `npm run types` immediately. Never defer type regeneration.
-
----
-
-## 5. Styling
-
-**Claude builds:**
-
-- One styling pass: layout, typography, one accent color
-- No component library
-- CSS Modules — no Tailwind
-
-**Confirmation:** Every screen from the Screens section of `docs/01-goal.md` is visually coherent and readable.
-
----
-
-## 6. End-to-End Walkthrough
-
-[Generate a manual test checklist specific to this project. Cover every user role from `docs/01-goal.md` and every core flow from the User Flows section. Each item must be a concrete, observable action with a concrete, observable outcome — not "verify it works."]
-```
+Then, create a manual test checklist specific to this project that covers at minimum the full user journey for every user role defined in `docs/01-goal.md` with concrete, observable actions and outcomes.

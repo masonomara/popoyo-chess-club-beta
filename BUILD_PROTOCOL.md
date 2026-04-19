@@ -130,6 +130,16 @@ npm run types
 
 `app/types/database.ts` will be empty until you run the schema in Supabase.
 
+### 8. Install Supabase dependencies
+
+**Why:** — `@supabase/supabase-js` is the database client and `@supabase/ssr` provides the cookie-based session helpers required for Next.js App Router. Both must be installed before writing any Supabase code. Installing before the plan step means Claude doesn't need to account for it
+
+**How:**
+
+```bash
+npm install @supabase/supabase-js @supabase/ssr
+```
+
 ---
 
 ## II. Architecture
@@ -170,7 +180,7 @@ Be as specific as the project demands.
 /schema
 ```
 
-2. Claude generates `docs/schema.sql`
+2. Claude generates `supabase/schema.sql`
 3. In the [Supabase SQL Editor](https://supabase.com/dashboard), copy, paste, and run `schema.sql`
 4. Generate `app/types/database.ts`:
 
@@ -192,20 +202,71 @@ npm run types
 /seed
 ```
 
-2. Claude generates `docs/seed.sql`
+2. Claude generates `supabase/seed.sql`
 3. In the [Supabase SQL Editor](https://supabase.com/dashboard), run `seed.sql` after `schema.sql`
 
 ### 10. Run `/plan` to generate the build plan
 
 **Why:** With `docs/01-goal.md` and `app/types/database.ts` complete, Claude has everything it needs — the goal, the schema, and the generated types — to produce a build plan tailored to this project. Running `/plan` before this point produces a generic plan; running it after produces one that knows your tables, your roles, and your mutation surface.
 
-**How:** In the Claude Code chat, run:
+**How:**
+
+1. In Claude Code, run:
 
 ```
 /plan
 ```
 
-Claude reads `docs/01-goal.md` and `app/types/database.ts`, researches Next.js and Supabase via Context7, and produces `docs/02-plan.md`. Review the plan before starting Phase 3. Each step identifies what gets built, who does it, and what the confirmation looks like.
+2. Claude reads `docs/01-goal.md`, `supabase/schema.sql`, and `app/types/database.ts`, researches Next.js and Supabase via Context7, and produces `docs/02-plan.md`
+3. Review the plan before writing any application code — each step identifies what gets built, who does it, and what the confirmation looks like
+
+### 11. Annotate and adjust `docs/02-plan.md`
+
+**Why:** These notes correct assumptions, reject approaches, add constraints, or provide domain knowledge that Claude doesn’t have. Catching a wrong assumption here costs nothing; catching it mid-build costs hours.
+
+**How:**
+
+1. Open `docs/02-plan.md` and read it top to bottom
+2. Add inline comments wherever something is wrong, incomplete, or needs redirecting:
+
+```markdown
+<!-- this should be a server action, not an API route -->
+<!-- remove this — we’re not building notifications in v1 -->
+<!-- the threshold check needs to happen before the insert, not after -->
+<!-- this screen is read-only for staff; only admins can edit -->
+```
+
+3. When done annotating, run the following prompt:
+
+```markdown
+I added a few notes to <document>, address all the notes and update the document accordingly. don’t implement yet
+```
+
+### 12. Add a task list to `docs/02-plan.md`
+
+**Why:** A checkable task list is a shared source of truth for implementation. Claude marks each task complete as it goes so you both always know where things stand.
+
+**How:** Run the following prompt:
+
+```markdown
+Add a detailed task list to docs/02-plan.md covering every phase and individual task in the plan. Each task should be a checkbox. Mark any task that must be done manually (e.g. Supabase SQL Editor, Vercel dashboard) with a [manual] label. Do not implement anything.
+```
+
+---
+
+## III. Implementation
+
+### 13. Build out each phase
+
+**Why:** One phase at a time keeps scope tight, creates a natural checkpoint after each phase, and prevents issues from compounding across phases.
+
+**How:** For each phase in `docs/02-plan.md`, send this prompt — replacing the phase number with the one Claude wrote:
+
+```markdown
+Implement Phase [N] from docs/02-plan.md. When you finish a task, mark it as completed in the plan. Do not stop until all tasks in this phase are complete. Do not add unnecessary comments or JSDoc. Do not use `any` or `unknown` types. Continuously run typecheck to make sure you’re not introducing new type errors.
+```
+
+After each phase, verify the confirmation criteria in the plan are met. Fix anything that doesn’t work before moving to the next phase. Repeat until all phases are complete.
 
 ---
 
