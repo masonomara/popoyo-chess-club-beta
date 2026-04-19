@@ -1,42 +1,19 @@
-# /plan
+We need to build an iterative, simple, and concise plan on how to build out the project. The plan must differentiate when something must be done manually (such as Supabase GUI) vs when you (Claude) will do something.
 
-Read `goal.md` and `app/types/database.ts` thoroughly and completely before writing anything.
+Read `docs/01-goal.md`, `supabase/schema.sql`, and `app/types/database.ts` each in depth. Understand how each works deeply, what each does, and each of their specificities. Understand everything there is to know about all three completely. The goal doc defines what gets built. The schema defines the database structure and RLS rules. The types file defines the exact shape of every table, column, and function — every step in the plan must be based off these three files. Each step should demonstrate what gets built, who does it, and how to confirm it's working.
 
-Then write `plan.md` — a concise, iterative build plan specific to this project.
+When that's done, research the technology stack further using Context7 to fetch current docs so you do not rely on training data for important conventions such as API signatures, package names, and configuration shapes.
 
----
+If any step requires a schema change — update `supabase/schema.sql`, re-run in Supabase SQL Editor, then run `npm run types` immediately. Never defer type regeneration. All steps are structural and should be written as shown, with project-specific details (table names, column names, mutation names) inserted where relevant. All content should be specific to this project — drawn from the actual screens, flows, roles, and type names in `docs/01-goal.md` and `app/types/database.ts`.
 
-## What plan.md must contain
+Start with the project skeleton and auth. Set up `lib/supabase/client.ts` to export `createBrowserClient<Database>()` using `@supabase/ssr` and then set up `lib/supabase/server.ts` to export `createServerClient<Database>()` using `@supabase/ssr` with cookie handling. Keep auth simple — one server action, two fields: email and password, following Supabase SSR best practices. Run `npm run dev` — zero errors — then open `localhost:3000`. At the end of this step, a new user should be able to sign up, the user should appear in the Supabase Auth dashboard, sign in with the same credentials, and the session should persist on page refresh.
 
-**Project Summary**
-2-3 sentences: what this app does, who uses it, what the core loop is.
+Then, build out the main read path as confirmation that Next.js and Supabase are connected and real data is in the browser. Direct Supabase query using `createServerClient` — no client hooks, no abstractions, no loading states. All existing data for the core tables that should be on the home screen should be displayed as a server component that queries Supabase directly, rendering real rows from the database using the types in `app/types/database.ts`. No loading states, client hooks, or abstractions yet. By the end of this step, you should be able to open the app in the browser and see real rows from the seeded database visible on the screen. Do not write the next step until this one shows real data.
 
-**Data Model Summary**
-Plain-English description of every table, its purpose, and its key relationships. Include a table: Table | Purpose | Key Fields.
+Once the main read path is complete, focus on the main write path — build the server actions for the core mutation(s) identified in `docs/01-goal.md` implemented end-to-end. Use generated types are trusted directly — no Zod for data you own. At this point, you should be able to submit the form, open the Supabase table editor, and confirm the row exists. Then come back to the browser and confirm it renders.
 
-**Build Order**
-The exact sequence of tasks for this specific project, with checkboxes. Follow this structure:
+Once the primary write path is complete, focus on the secondary surfaces, features, and mutations from `docs/01-goal.md`. Identify and focus on these features in this phase, and only this phase — use actual screen names and actual type names from `app/types/database.ts`. If a feature such as realtime is required, add it here and only here — in a client component, filtered by a specific ID so you're not subscribing to a useless/stale subscription. Confirm it updates live before moving on.
 
-1. Schema + Types (target: 15 min)
-2. Deployment Scaffold (target: 15 min)
-3. Auth (target: 15 min)
-4. Read Path — [specific screen name from goal.md]
-5. Write Path — [specific mutation name from goal.md] (target: 30 min ⭐)
-6. Secondary Surfaces — [list each one]
-7. Styling + Walkthrough (target: 60 min)
+After the secondary features are created, there should be one styling pass of layout, typography, and one accent color. No component library needed — use CSS modules, implement a simple design system. Goal is to make sure everything is coherent and readable.
 
-**Scope Cuts**
-An empty table ready to be filled if scope needs to be cut at the 30-minute milestone.
-
-**Open Questions**
-Any ambiguities in `goal.md` or `database.ts` that need a decision before building. If there are none, say so.
-
----
-
-## Rules for writing plan.md
-
-- Be specific to this project — no generic placeholder text
-- Name actual tables, actual screens, actual mutations from the goal
-- Keep it short — the plan is a reference, not a spec
-- Flag anything in `goal.md` that looks risky for a 60-minute build
-- Do not start writing application code — only write plan.md
+Then, create a manual test checklist specific to this project that covers at minimum the full user journey for every user role defined in `docs/01-goal.md` with concrete, observable actions and outcomes.
