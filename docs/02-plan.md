@@ -21,18 +21,18 @@ Source of truth: `docs/01-goal.md` · `supabase/schema.sql` · `app/types/databa
 
 ### Phase 1 — Supabase Clients, Proxy, and Auth
 
-- [ ] Create `lib/supabase/client.ts` — `createBrowserClient<Database>()`
-- [ ] Create `lib/supabase/server.ts` — async `createClient()` returning `createServerClient<Database>()` with `cookies()` from `next/headers`
-- [ ] Create `proxy.ts` — session refresh proxy with `createServerClient`, cookie forwarding, and matcher config
-- [ ] Create `app/anteup/page.tsx` — sign-in form and sign-up form (email, password, nickname, country)
-- [ ] Create `app/actions/auth.ts` — `signIn(formData)` server action
-- [ ] Create `app/actions/auth.ts` — `signUp(formData)` server action with `is_email_approved` RPC guard
-- [ ] Wire `useActionState` in `/anteup` forms for inline error display and pending state
-- [ ] [manual] Attempt sign-up with `gerry@popoyochess.club` — confirm inline "not approved" error
-- [ ] [manual] Sign up with `rob@popoyochess.club` — confirm redirect to `/`
-- [ ] [manual] Confirm new user appears in Supabase Auth Dashboard
-- [ ] [manual] Sign in with same credentials — session established
-- [ ] [manual] Refresh page — session persists
+- [x] Create `lib/supabase/client.ts` — `createBrowserClient<Database>()`
+- [x] Create `lib/supabase/server.ts` — async `createClient()` returning `createServerClient<Database>()` with `cookies()` from `next/headers`
+- [x] Create `proxy.ts` — session refresh proxy with `createServerClient`, cookie forwarding, and matcher config
+- [x] Create `app/anteup/page.tsx` — sign-in form and sign-up form (email, password, nickname, country)
+- [x] Create `app/actions/auth.ts` — `signIn(formData)` server action
+- [x] Create `app/actions/auth.ts` — `signUp(formData)` server action with `is_email_approved` RPC guard
+- [x] Wire `useActionState` in `/anteup` forms for inline error display and pending state
+- [x] [manual] Attempt sign-up with `gerry@popoyochess.club` — confirm inline "not approved" error
+- [x] [manual] Sign up with `rob@popoyochess.club` — confirm redirect to `/`
+- [x] [manual] Confirm new user appears in Supabase Auth Dashboard
+- [x] [manual] Sign in with same credentials — session established
+- [x] [manual] Refresh page — session persists
 
 ### Phase 2 — Main Read Path: Homepage
 
