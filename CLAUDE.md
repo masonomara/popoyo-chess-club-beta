@@ -2,7 +2,7 @@
 
 ## Types
 
-- `app/types/database.ts` is the single source of truth for all types
+- `src/types/database.ts` is the single source of truth for all types
 - No type is defined anywhere else in the codebase
 - If you need a cast, fix the schema and regenerate — no `as SomeType`
 - Zod for data you don't own (user-submitted form fields, external API responses); generated types for data you do

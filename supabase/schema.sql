@@ -547,7 +547,7 @@ $$;
 
 -- ────────────────────────────────────────────────────────────────
 -- recalculate_weekly_elo
--- Processes only games played since the most recent Monday 00:00 UTC.
+-- Processes only games played since the most recent Monday 00:00 America/Managua.
 -- Everyone starts at 1500; K=64 for every game.
 -- ────────────────────────────────────────────────────────────────
 CREATE OR REPLACE FUNCTION recalculate_weekly_elo()
@@ -557,7 +557,7 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-  week_start   TIMESTAMPTZ := date_trunc('week', now());
+  week_start   TIMESTAMPTZ := (date_trunc('week', (now() AT TIME ZONE 'America/Managua'))::DATE)::TIMESTAMPTZ;
   game_rec     RECORD;
   p1_elo       NUMERIC;
   p2_elo       NUMERIC;
@@ -640,7 +640,7 @@ $$;
 
 -- ────────────────────────────────────────────────────────────────
 -- recalculate_monthly_elo
--- Processes only games played since the 1st of the current month 00:00 UTC.
+-- Processes only games played since the 1st of the current month 00:00 America/Managua.
 -- Everyone starts at 1500; K=48 for every game.
 -- ────────────────────────────────────────────────────────────────
 CREATE OR REPLACE FUNCTION recalculate_monthly_elo()
@@ -650,7 +650,7 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-  month_start  TIMESTAMPTZ := date_trunc('month', now());
+  month_start  TIMESTAMPTZ := (date_trunc('month', (now() AT TIME ZONE 'America/Managua'))::DATE)::TIMESTAMPTZ;
   game_rec     RECORD;
   p1_elo       NUMERIC;
   p2_elo       NUMERIC;
