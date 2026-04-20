@@ -22,10 +22,15 @@ const TC_CATEGORY_MAP = new Map<string, Tables<'games'>['time_control_category']
   ['25+0', 'classical'], ['30+0', 'classical'], ['30+20', 'classical'], ['60+0', 'classical'],
 ])
 
-function toLocalDatetimeString(isoStr: string): string {
+function toNicaDatetimeString(isoStr: string): string {
   const d = new Date(isoStr)
-  d.setSeconds(0, 0)
-  return d.toISOString().slice(0, 16)
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Managua',
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  }).formatToParts(d)
+  const get = (t: string) => parts.find(p => p.type === t)?.value ?? ''
+  return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}`
 }
 
 export default function EditGameForm({
@@ -42,7 +47,7 @@ export default function EditGameForm({
   )
   const [isDraw, setIsDraw] = useState(game.result === 'draw')
   const [timeControl, setTimeControl] = useState(game.time_control)
-  const [gameDate, setGameDate] = useState(toLocalDatetimeString(game.game_date))
+  const [gameDate, setGameDate] = useState(toNicaDatetimeString(game.game_date))
   const [player1File, setPlayer1File] = useState<File | null>(null)
   const [player2File, setPlayer2File] = useState<File | null>(null)
   const [uploadPending, setUploadPending] = useState(false)

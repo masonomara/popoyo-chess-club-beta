@@ -61,7 +61,7 @@ export async function submitGame(
     p_result: d.result,
     p_time_control: d.time_control,
     p_time_control_category: d.time_control_category,
-    p_game_date: new Date(d.game_date).toISOString(),
+    p_game_date: new Date(d.game_date + '-06:00').toISOString(),
     p_submitted_by: user.id,
     p_player1_photo_url: d.player1_photo_url,
     p_player2_photo_url: d.player2_photo_url,
@@ -135,7 +135,7 @@ export async function updateGame(
     p_result: d.result,
     p_time_control: d.time_control,
     p_time_control_category: d.time_control_category,
-    p_game_date: new Date(d.game_date).toISOString(),
+    p_game_date: new Date(d.game_date + '-06:00').toISOString(),
     p_player1_photo_url: d.player1_photo_url,
     p_player2_photo_url: d.player2_photo_url,
   })

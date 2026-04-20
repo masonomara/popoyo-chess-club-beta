@@ -47,10 +47,20 @@ const TC_CATEGORY_MAP = new Map<
   ["60+0", "classical"],
 ]);
 
+function toNicaDatetimeString(d: Date): string {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Managua',
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+  }).formatToParts(d)
+  const get = (t: string) => parts.find(p => p.type === t)?.value ?? ''
+  return `${get('year')}-${get('month')}-${get('day')}T${get('hour')}:${get('minute')}`
+}
+
 function nowLocal(): string {
-  const d = new Date();
-  d.setSeconds(0, 0);
-  return d.toISOString().slice(0, 16);
+  const d = new Date()
+  d.setSeconds(0, 0)
+  return toNicaDatetimeString(d)
 }
 
 export default function AddGameSheet({
