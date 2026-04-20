@@ -20,7 +20,7 @@ export default function ForgotPasswordForm({ invalidLink }: { invalidLink: boole
         <div className={styles.successCard}>
           <p className={styles.successText}>Check your inbox — we sent a reset link.</p>
         </div>
-        <Link href="/anteup" className={styles.backLink}>
+        <Link href="/readyforspanking" className={styles.backLink}>
           Back to sign in
         </Link>
       </div>
@@ -57,7 +57,7 @@ export default function ForgotPasswordForm({ invalidLink }: { invalidLink: boole
       <button type="submit" disabled={pending}>
         {pending ? 'Sending…' : 'Send Reset Link'}
       </button>
-      <Link href="/anteup" className={styles.backLink}>
+      <Link href="/readyforspanking" className={styles.backLink}>
         Back to sign in
       </Link>
     </form>

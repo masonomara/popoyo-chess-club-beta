@@ -24,10 +24,10 @@ Source of truth: `docs/01-goal.md` · `supabase/schema.sql` · `app/types/databa
 - [x] Create `lib/supabase/client.ts` — `createBrowserClient<Database>()`
 - [x] Create `lib/supabase/server.ts` — async `createClient()` returning `createServerClient<Database>()` with `cookies()` from `next/headers`
 - [x] Create `proxy.ts` — session refresh proxy with `createServerClient`, cookie forwarding, and matcher config
-- [x] Create `app/anteup/page.tsx` — sign-in form and sign-up form (email, password, nickname, country)
+- [x] Create `app/readyforspanking/page.tsx` — sign-in form and sign-up form (email, password, nickname, country)
 - [x] Create `app/actions/auth.ts` — `signIn(formData)` server action
 - [x] Create `app/actions/auth.ts` — `signUp(formData)` server action with `is_email_approved` RPC guard
-- [x] Wire `useActionState` in `/anteup` forms for inline error display and pending state
+- [x] Wire `useActionState` in `/readyforspanking` forms for inline error display and pending state
 - [x] [manual] Attempt sign-up with `gerry@popoyochess.club` — confirm inline "not approved" error
 - [x] [manual] Sign up with `rob@popoyochess.club` — confirm redirect to `/`
 - [x] [manual] Confirm new user appears in Supabase Auth Dashboard
@@ -76,7 +76,7 @@ Source of truth: `docs/01-goal.md` · `supabase/schema.sql` · `app/types/databa
 - [x] Query `games` by `params.id` with two player profile joins
 - [x] Query `comments` where `game_id = params.id` with author profiles, `ORDER BY created_at ASC`
 - [x] Display players (nickname + country), colors, result, time control, `game_date`, photos if present
-- [x] Show inline viewer sign-up form (not a link to `/anteup`) for unauthenticated users in the comment section
+- [x] Show inline viewer sign-up form (not a link to `/readyforspanking`) for unauthenticated users in the comment section
 - [x] Show comment form for authenticated users
 - [x] Create `app/actions/comments.ts` — `submitComment(formData)` inserting into `comments`, then `revalidatePath('/games/[id]')`
 - [x] Create `app/components/RealtimeComments.tsx` — `'use client'`, receives initial comments as prop, subscribes to `postgres_changes` on `comments` table filtered to `game_id=eq.${gameId}`
@@ -128,7 +128,7 @@ Source of truth: `docs/01-goal.md` · `supabase/schema.sql` · `app/types/databa
 - [x] Style game history rows — compact; result badge chip (W/L/D); player names; time control tag; date
 - [x] Style `AddGameSheet` — slides up with `transform: translateY`, `backdrop-filter: blur`
 - [x] Style game detail page — two-column player display with color chips, result callout, comment thread
-- [x] Style `/anteup` — centered auth card, two tab forms (Sign In / Sign Up)
+- [x] Style `/readyforspanking` — centered auth card, two tab forms (Sign In / Sign Up)
 - [x] Style `/admin` page — list table, inline add form
 - [x] Style `/weekly` and `/monthly` pages — consistent with homepage winner card design
 - [x] Add `.module.css` file to every component and page
@@ -220,11 +220,11 @@ npm run types
 - `lib/supabase/client.ts` — `createBrowserClient<Database>()` using `@supabase/ssr`
 - `lib/supabase/server.ts` — async `createClient()` returning `createServerClient<Database>()` with `cookies()` from `next/headers`
 - `proxy.ts` — session refresh proxy using `createServerClient` with request/response cookie forwarding; exports `export function proxy()` (not `middleware` — renamed in Next.js 16); matcher excludes `_next/static`, `_next/image`, `favicon.ico`
-- `app/anteup/page.tsx` — the secret, unlinked auth page with two forms: **Sign In** (email + password) and **Sign Up** (email + password + nickname + country)
+- `app/readyforspanking/page.tsx` — the secret, unlinked auth page with two forms: **Sign In** (email + password) and **Sign Up** (email + password + nickname + country)
 - `app/actions/auth.ts` — two `'use server'` actions:
   - `signIn(formData)` → `supabase.auth.signInWithPassword({ email, password })` → `redirect('/')`
   - `signUp(formData)` → calls `is_email_approved` RPC first; if not approved, returns inline error; if approved, `supabase.auth.signUp({ email, password, options: { data: { nickname, country } } })` → `redirect('/')`
-- `app/anteup/page.tsx` renders the forms as client components using `useActionState` for inline error display (unapproved email error, wrong password, etc.)
+- `app/readyforspanking/page.tsx` renders the forms as client components using `useActionState` for inline error display (unapproved email error, wrong password, etc.)
 
 ### Why the ordering matters
 
@@ -238,7 +238,7 @@ Use `NEXT_PUBLIC_SUPABASE_ANON_KEY` — the current Supabase dashboard still use
 
 ### Confirm
 
-1. Go to `localhost:3000/anteup`
+1. Go to `localhost:3000/readyforspanking`
 2. Sign up with `gerry@popoyochess.club` — expect an inline error: not on approved list (Gerry was seeded directly into auth.users, not through the form, and his email is not in `approved_emails`)
 3. Sign up with `rob@popoyochess.club` / any password — expect success, redirect to `/`
 4. Check Supabase Auth dashboard → new user appears
@@ -523,7 +523,7 @@ Every component gets a `.module.css` file. No Tailwind. No styled-components. No
 ### Admin (Gerry)
 
 - [ ] Set Gerry's password via Supabase Auth Dashboard → Users → gerry@popoyochess.club → Reset Password
-- [ ] Sign in at `/anteup` with `gerry@popoyochess.club`
+- [ ] Sign in at `/readyforspanking` with `gerry@popoyochess.club`
 - [ ] Confirm redirect to `/` after sign in
 - [ ] Confirm "Add Game" button is visible on homepage
 - [ ] Submit a new game via the bottom sheet — confirm it appears in game history
@@ -536,7 +536,7 @@ Every component gets a `.module.css` file. No Tailwind. No styled-components. No
 
 ### Member (Top Rob)
 
-- [ ] Sign in at `/anteup` with `rob@popoyochess.club`
+- [ ] Sign in at `/readyforspanking` with `rob@popoyochess.club`
 - [ ] Confirm redirect to `/`
 - [ ] Confirm "Add Game" button is visible
 - [ ] Submit a game — confirm it appears in history with correct result
@@ -551,12 +551,12 @@ Every component gets a `.module.css` file. No Tailwind. No styled-components. No
 - [ ] Go to `localhost:3000` — confirm leaderboard, winner cards, and game history load without sign in
 - [ ] Confirm no "Add Game" button visible
 - [ ] Click a game row — confirm detail page loads
-- [ ] Confirm "Create an account to leave a comment" prompt appears (not a sign-in form, not a link to `/anteup`)
+- [ ] Confirm "Create an account to leave a comment" prompt appears (not a sign-in form, not a link to `/readyforspanking`)
 - [ ] Sign up from the comment prompt with `pax2@gmail.com` — confirm account created with role `viewer` (check Supabase Auth Dashboard)
 - [ ] Sign in — confirm no "Add Game" button still visible (viewer cannot submit games)
 - [ ] Post a comment — confirm it appears
 - [ ] Try navigating to `/admin` — confirm redirect
-- [ ] Try navigating to `/anteup` — page loads (it's public) but sign up with unapproved email should show inline error
+- [ ] Try navigating to `/readyforspanking` — page loads (it's public) but sign up with unapproved email should show inline error
 
 ### Leaderboard toggle
 
@@ -578,7 +578,7 @@ Every component gets a `.module.css` file. No Tailwind. No styled-components. No
 ### Edge cases
 
 - [ ] Submit a game with the same player as both player1 and player2 — confirm inline error
-- [ ] Attempt to access `/anteup` and sign up with an unapproved email — confirm inline error, no auth user created (check Supabase Auth Dashboard to confirm no new row)
+- [ ] Attempt to access `/readyforspanking` and sign up with an unapproved email — confirm inline error, no auth user created (check Supabase Auth Dashboard to confirm no new row)
 - [ ] Photo upload: submit a game with a winner photo — confirm the photo URL is stored in `games.player1_photo_url` and the image renders on the game detail page
 
 ---
@@ -590,7 +590,7 @@ app/
   page.tsx                        # Homepage (server component)
   layout.tsx                      # Root layout
   globals.css                     # Design tokens + base styles
-  anteup/
+  readyforspanking/
     page.tsx                      # Auth page (sign in + sign up)
   games/
     [id]/

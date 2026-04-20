@@ -8,7 +8,7 @@ The Popoyo Chess Club plays games and shares results over text message. This web
 
 There are three kinds of users.
 
-**Admins** are added manually through the Supabase backend, not through the app. They can submit and edit games, and they manage the member list — adding and removing approved emails. Admins log in from a secret, unindexed URL: `/anteup`.
+**Admins** are added manually through the Supabase backend, not through the app. They can submit and edit games, and they manage the member list — adding and removing approved emails. Admins log in from a secret, unindexed URL: `/readyforspanking`.
 
 **Members** must have an email pre-approved by an admin. Once approved, they sign up through that same secret URL. They can submit and edit games.
 
@@ -62,7 +62,7 @@ When a member or admin is logged in, a prominent "Add Game" button appears. Sess
 
 **Game Detail Page** shows the players, colors, result, time control, datetime, and photos. Below that is a comments section. Unauthenticated viewers see a prompt to create an account in order to comment.
 
-**`/anteup`** is the secret, unindexed login page for admins and members. It has a login form and a sign-up form (email, password, nickname, country). If the email entered is not on the approved list, an inline error appears immediately and no further steps are allowed. This page is not linked from anywhere on the public site.
+**`/readyforspanking`** is the secret, unindexed login page for admins and members. It has a login form and a sign-up form (email, password, nickname, country). If the email entered is not on the approved list, an inline error appears immediately and no further steps are allowed. This page is not linked from anywhere on the public site.
 
 **Admin Panel** is admin-only. It manages the approved member email list — add or remove entries.
 

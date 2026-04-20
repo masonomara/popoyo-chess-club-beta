@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState, useActionState } from 'react'
 import { signIn, signUp, type AuthState } from '@/app/actions/auth'
-import styles from './AnteupForms.module.css'
+import styles from './ReadyForSpankingForms.module.css'
 
 function SignInForm() {
   const [state, action, pending] = useActionState<AuthState, FormData>(signIn, null)
@@ -97,7 +97,7 @@ function SignUpForm() {
   )
 }
 
-export default function AnteupForms() {
+export default function ReadyForSpankingForms() {
   const [tab, setTab] = useState<'signin' | 'signup'>('signin')
 
   return (
