@@ -2,6 +2,7 @@
 
 import { useActionState, startTransition } from 'react'
 import { signUp, type AuthState } from '@/app/actions/auth'
+import { COUNTRIES } from '@/app/lib/countries'
 import styles from './InlineSignUp.module.css'
 
 export default function InlineSignUp() {
@@ -55,15 +56,17 @@ export default function InlineSignUp() {
             </div>
             <div>
               <label htmlFor="inline-country">Country</label>
-              <input
+              <select
                 id="inline-country"
-                type="text"
                 name="country"
-                maxLength={2}
-                placeholder="US"
                 required
                 disabled={pending}
-              />
+              >
+                <option value="">Select…</option>
+                {COUNTRIES.map((c) => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>

@@ -2,16 +2,16 @@
   --accent: #1a6b5c;
   --accent-hover: #145549;
   --accent-light: #22c55e;
-  --bg: #0f0f0f;
-  --surface: #1a1a1a;
-  --surface-raised: #222;
-  --border: #2e2e2e;
-  --text: #f0f0f0;
-  --text-muted: #888;
-  --text-dim: #555;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-raised: #F3F8FA;
+  --border: #E5E7EE;
+  --text: #171717;
+  --text-muted: #96A2B0;
+  --text-dim: #424242;
   --radius: 8px;
   --radius-lg: 12px;
-  --font: var(--font-sans, "Inter", system-ui, sans-serif);
+  --font: var(--font-sans, "Rethink Sans", system-ui, sans-serif);
 }
 
 *,

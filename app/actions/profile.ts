@@ -8,7 +8,7 @@ export type ProfileState = { error: string } | { success: string } | null
 
 const UpdateProfileSchema = z.object({
   nickname: z.string().min(1).max(50),
-  country: z.string().min(1).max(10),
+  country: z.string().min(1).max(4),
 })
 
 const UpdateEmailSchema = z.object({

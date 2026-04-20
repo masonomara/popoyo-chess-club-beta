@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState, useActionState } from 'react'
 import { signIn, signUp, type AuthState } from '@/app/actions/auth'
+import { COUNTRIES } from '@/app/lib/countries'
 import styles from './ReadyForSpankingForms.module.css'
 
 function SignInForm() {
@@ -79,14 +80,16 @@ function SignUpForm() {
         </div>
         <div className={styles.field}>
           <label htmlFor="signup-country">Country</label>
-          <input
+          <select
             id="signup-country"
             name="country"
-            type="text"
-            maxLength={2}
-            placeholder="US"
             required
-          />
+          >
+            <option value="">Select…</option>
+            {COUNTRIES.map((c) => (
+              <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
+          </select>
         </div>
       </div>
       {state?.error && <p role="alert">{state.error}</p>}

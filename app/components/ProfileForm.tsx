@@ -7,6 +7,7 @@ import {
   updatePassword,
   type ProfileState,
 } from '@/app/actions/profile'
+import { COUNTRIES } from '@/app/lib/countries'
 import styles from './ProfileForm.module.css'
 
 function errorMsg(state: ProfileState): string | null {
@@ -90,15 +91,18 @@ export default function ProfileForm({
             </div>
             <div className={styles.field}>
               <label htmlFor="profile-country">Country</label>
-              <input
+              <select
                 id="profile-country"
                 name="country"
-                type="text"
                 defaultValue={country}
-                maxLength={10}
                 required
                 disabled={profilePending}
-              />
+              >
+                <option value="">Select…</option>
+                {COUNTRIES.map((c) => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
             </div>
           </div>
           {errorMsg(profileState) && <p role="alert">{errorMsg(profileState)}</p>}
