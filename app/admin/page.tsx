@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import AdminPanel from '@/app/components/AdminPanel'
 import type { Tables } from '@/app/types/database'
+import styles from './page.module.css'
 
 type ApprovedEmailWithProfile = Tables<'approved_emails'> & {
   profiles: Tables<'profiles'> | null
@@ -30,9 +31,9 @@ export default async function AdminPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <main>
-      <h1>Approved Emails</h1>
+    <>
+      <h1 className={styles.title}>Approved Emails</h1>
       <AdminPanel emails={(emails ?? []) as ApprovedEmailWithProfile[]} />
-    </main>
+    </>
   )
 }

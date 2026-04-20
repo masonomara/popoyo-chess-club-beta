@@ -1,0 +1,75 @@
+.addForm {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.addInput {
+  flex: 1;
+  min-width: 200px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.table th {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: 0.9375rem;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background: var(--surface);
+}
+
+.email {
+  font-weight: 500;
+}
+
+.addedBy {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.date {
+  color: var(--text-dim);
+  font-size: 0.875rem;
+}
+
+.removeBtn {
+  font-size: 0.8125rem;
+  padding: 5px 12px;
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+.removeBtn:hover:not(:disabled) {
+  border-color: #f87171;
+}
+
+.empty {
+  padding: 32px 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}

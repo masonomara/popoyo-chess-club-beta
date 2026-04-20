@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useActionState, useState, startTransition } from 'react'
 import { forgotPassword, type AuthState } from '@/app/actions/auth'
+import styles from './ForgotPasswordForm.module.css'
 
 export default function ForgotPasswordForm({ invalidLink }: { invalidLink: boolean }) {
   const [state, dispatch, pending] = useActionState<AuthState, FormData>(
@@ -16,8 +17,12 @@ export default function ForgotPasswordForm({ invalidLink }: { invalidLink: boole
   if (succeeded) {
     return (
       <div>
-        <p>Check your inbox — we sent a password reset link.</p>
-        <Link href="/anteup">Back to sign in</Link>
+        <div className={styles.successCard}>
+          <p className={styles.successText}>Check your inbox — we sent a reset link.</p>
+        </div>
+        <Link href="/anteup" className={styles.backLink}>
+          Back to sign in
+        </Link>
       </div>
     )
   }
@@ -32,15 +37,18 @@ export default function ForgotPasswordForm({ invalidLink }: { invalidLink: boole
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      {invalidLink && <p role="alert">Reset link is invalid or expired. Try again.</p>}
-      <div>
+    <form onSubmit={handleSubmit} className={styles.form}>
+      {invalidLink && (
+        <p role="alert">Reset link is invalid or expired. Try again.</p>
+      )}
+      <div className={styles.field}>
         <label htmlFor="forgot-email">Email</label>
         <input
           id="forgot-email"
           name="email"
           type="email"
           autoComplete="email"
+          placeholder="you@example.com"
           required
           disabled={pending}
         />
@@ -49,7 +57,9 @@ export default function ForgotPasswordForm({ invalidLink }: { invalidLink: boole
       <button type="submit" disabled={pending}>
         {pending ? 'Sending…' : 'Send Reset Link'}
       </button>
-      <Link href="/anteup">Back to sign in</Link>
+      <Link href="/anteup" className={styles.backLink}>
+        Back to sign in
+      </Link>
     </form>
   )
 }

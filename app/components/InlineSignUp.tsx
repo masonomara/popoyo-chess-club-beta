@@ -2,6 +2,7 @@
 
 import { useActionState, startTransition } from 'react'
 import { signUp, type AuthState } from '@/app/actions/auth'
+import styles from './InlineSignUp.module.css'
 
 export default function InlineSignUp() {
   const [state, dispatch, pending] = useActionState<AuthState, FormData>(signUp, null)
@@ -15,34 +16,62 @@ export default function InlineSignUp() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <p>Create an account to leave a comment</p>
-      <input type="email" name="email" placeholder="Email" required disabled={pending} />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        required
-        disabled={pending}
-      />
-      <input
-        type="text"
-        name="nickname"
-        placeholder="Nickname"
-        required
-        disabled={pending}
-      />
-      <input
-        type="text"
-        name="country"
-        placeholder="Country flag emoji (e.g. 🇺🇸)"
-        required
-        disabled={pending}
-      />
-      {state?.error && <p role="alert">{state.error}</p>}
-      <button type="submit" disabled={pending}>
-        {pending ? 'Creating account…' : 'Create account'}
-      </button>
-    </form>
+    <div className={styles.card}>
+      <p className={styles.heading}>Create an account to leave a comment</p>
+      <form onSubmit={handleSubmit}>
+        <div className={styles.fields}>
+          <div>
+            <label htmlFor="inline-email">Email</label>
+            <input
+              id="inline-email"
+              type="email"
+              name="email"
+              placeholder="you@example.com"
+              required
+              disabled={pending}
+            />
+          </div>
+          <div>
+            <label htmlFor="inline-password">Password</label>
+            <input
+              id="inline-password"
+              type="password"
+              name="password"
+              placeholder="Min 6 characters"
+              required
+              disabled={pending}
+            />
+          </div>
+          <div className={styles.fieldRow}>
+            <div>
+              <label htmlFor="inline-nickname">Nickname</label>
+              <input
+                id="inline-nickname"
+                type="text"
+                name="nickname"
+                required
+                disabled={pending}
+              />
+            </div>
+            <div>
+              <label htmlFor="inline-country">Country</label>
+              <input
+                id="inline-country"
+                type="text"
+                name="country"
+                maxLength={2}
+                placeholder="US"
+                required
+                disabled={pending}
+              />
+            </div>
+          </div>
+        </div>
+        {state?.error && <p role="alert">{state.error}</p>}
+        <button type="submit" disabled={pending}>
+          {pending ? 'Creating account…' : 'Create account'}
+        </button>
+      </form>
+    </div>
   )
 }

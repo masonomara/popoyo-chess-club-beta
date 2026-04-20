@@ -3,6 +3,7 @@
 import { useActionState, startTransition } from 'react'
 import { addApprovedEmail, removeApprovedEmail, type AdminState } from '@/app/actions/admin'
 import type { Tables } from '@/app/types/database'
+import styles from './AdminPanel.module.css'
 
 type ApprovedEmailWithProfile = Tables<'approved_emails'> & {
   profiles: Tables<'profiles'> | null
@@ -40,50 +41,57 @@ export default function AdminPanel({
 
   return (
     <div>
-      <form onSubmit={handleAdd}>
+      <form onSubmit={handleAdd} className={styles.addForm}>
         <input
           type="email"
           name="email"
           placeholder="new@example.com"
           required
           disabled={addPending}
+          className={styles.addInput}
         />
         <button type="submit" disabled={addPending}>
           {addPending ? 'Adding…' : 'Add Email'}
         </button>
-        {addState?.error && <p role="alert">{addState.error}</p>}
       </form>
-
+      {addState?.error && <p role="alert">{addState.error}</p>}
       {removeState?.error && <p role="alert">{removeState.error}</p>}
 
-      <table>
-        <thead>
-          <tr>
-            <th>Email</th>
-            <th>Added by</th>
-            <th>Added at</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {emails.map((entry) => (
-            <tr key={entry.id}>
-              <td>{entry.email}</td>
-              <td>{entry.profiles?.nickname ?? '—'}</td>
-              <td>{new Date(entry.created_at).toLocaleDateString()}</td>
-              <td>
-                <button
-                  type="button"
-                  onClick={() => handleRemove(entry.id)}
-                  disabled={removePending}
-                >
-                  Remove
-                </button>
-              </td>
+      {emails.length === 0 ? (
+        <p className={styles.empty}>No approved emails yet.</p>
+      ) : (
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Added by</th>
+              <th>Added</th>
+              <th></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {emails.map((entry) => (
+              <tr key={entry.id}>
+                <td className={styles.email}>{entry.email}</td>
+                <td className={styles.addedBy}>{entry.profiles?.nickname ?? '—'}</td>
+                <td className={styles.date}>
+                  {new Date(entry.created_at).toLocaleDateString()}
+                </td>
+                <td>
+                  <button
+                    type="button"
+                    onClick={() => handleRemove(entry.id)}
+                    disabled={removePending}
+                    className={styles.removeBtn}
+                  >
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   )
 }

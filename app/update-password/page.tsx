@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import UpdatePasswordForm from '@/app/components/UpdatePasswordForm'
+import styles from './page.module.css'
 
 export default async function UpdatePasswordPage() {
   const supabase = await createClient()
@@ -12,9 +13,12 @@ export default async function UpdatePasswordPage() {
   if (!user) redirect('/forgot-password')
 
   return (
-    <main>
-      <h1>Set New Password</h1>
-      <UpdatePasswordForm />
-    </main>
+    <div className={styles.wrap}>
+      <div className={styles.card}>
+        <h1 className={styles.title}>Set New Password</h1>
+        <p className={styles.subtitle}>Choose a strong password for your account.</p>
+        <UpdatePasswordForm />
+      </div>
+    </div>
   )
 }

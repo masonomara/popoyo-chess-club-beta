@@ -4,6 +4,7 @@ import { useState, useActionState, startTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { updateGame, type GameState } from '@/app/actions/games'
 import type { Tables } from '@/app/types/database'
+import styles from './EditGameForm.module.css'
 
 const CATEGORY_ORDER = ['bullet', 'blitz', 'rapid', 'classical'] as const
 
@@ -15,22 +16,10 @@ const TIME_CONTROLS: Record<Tables<'games'>['time_control_category'], string[]> 
 }
 
 const TC_CATEGORY_MAP = new Map<string, Tables<'games'>['time_control_category']>([
-  ['0+1', 'bullet'],
-  ['1+0', 'bullet'],
-  ['1+1', 'bullet'],
-  ['2+1', 'bullet'],
-  ['3+0', 'blitz'],
-  ['3+2', 'blitz'],
-  ['5+0', 'blitz'],
-  ['5+3', 'blitz'],
-  ['10+0', 'rapid'],
-  ['10+5', 'rapid'],
-  ['15+0', 'rapid'],
-  ['15+10', 'rapid'],
-  ['25+0', 'classical'],
-  ['30+0', 'classical'],
-  ['30+20', 'classical'],
-  ['60+0', 'classical'],
+  ['0+1', 'bullet'], ['1+0', 'bullet'], ['1+1', 'bullet'], ['2+1', 'bullet'],
+  ['3+0', 'blitz'], ['3+2', 'blitz'], ['5+0', 'blitz'], ['5+3', 'blitz'],
+  ['10+0', 'rapid'], ['10+5', 'rapid'], ['15+0', 'rapid'], ['15+10', 'rapid'],
+  ['25+0', 'classical'], ['30+0', 'classical'], ['30+20', 'classical'], ['60+0', 'classical'],
 ])
 
 function toLocalDatetimeString(isoStr: string): string {
@@ -78,7 +67,6 @@ export default function EditGameForm({
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setUploadPending(true)
-
     const formData = new FormData()
     formData.set('player1_id', player1Id)
     formData.set('player2_id', player2Id)
@@ -87,21 +75,14 @@ export default function EditGameForm({
     formData.set('time_control', timeControl)
     formData.set('time_control_category', TC_CATEGORY_MAP.get(timeControl) ?? 'rapid')
     formData.set('game_date', gameDate)
-
-    const existingP1Url = game.player1_photo_url
-    const existingP2Url = game.player2_photo_url
-
     const [p1Url, p2Url] = await Promise.all([
-      player1File ? uploadFile(player1File, 'p1') : Promise.resolve(existingP1Url),
-      player2File ? uploadFile(player2File, 'p2') : Promise.resolve(existingP2Url),
+      player1File ? uploadFile(player1File, 'p1') : Promise.resolve(game.player1_photo_url),
+      player2File ? uploadFile(player2File, 'p2') : Promise.resolve(game.player2_photo_url),
     ])
     if (p1Url) formData.set('player1_photo_url', p1Url)
     if (p2Url) formData.set('player2_photo_url', p2Url)
-
     setUploadPending(false)
-    startTransition(() => {
-      dispatch(formData)
-    })
+    startTransition(() => dispatch(formData))
   }
 
   function handlePlayer1Change(newId: string) {
@@ -115,92 +96,101 @@ export default function EditGameForm({
   const player2Options = players.filter((p) => p.id !== player1Id)
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <select
-          value={player1Id}
-          onChange={(e) => handlePlayer1Change(e.target.value)}
-          required
-        >
-          {players.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.nickname}
-            </option>
-          ))}
-        </select>
+    <div className={styles.wrap}>
+      <form onSubmit={handleSubmit}>
+        <div className={styles.gameRow}>
+          <select
+            value={player1Id}
+            onChange={(e) => handlePlayer1Change(e.target.value)}
+            required
+            className={styles.playerSelect}
+          >
+            {players.map((p) => (
+              <option key={p.id} value={p.id}>{p.nickname}</option>
+            ))}
+          </select>
 
-        <button
-          type="button"
-          onClick={() => setPlayer1Color((c) => (c === 'white' ? 'black' : 'white'))}
-        >
-          {player1Color === 'white' ? 'White' : 'Black'}
-        </button>
+          <button
+            type="button"
+            onClick={() => setPlayer1Color((c) => (c === 'white' ? 'black' : 'white'))}
+            className={`${styles.colorBtn} ${player1Color === 'white' ? styles.colorBtnWhite : ''}`}
+          >
+            {player1Color === 'white' ? '○ White' : '● Black'}
+          </button>
 
-        <button type="button" onClick={() => setIsDraw((d) => !d)}>
-          {isDraw ? 'Drew' : 'Defeats'}
-        </button>
+          <button
+            type="button"
+            onClick={() => setIsDraw((d) => !d)}
+            className={`${styles.resultBtn} ${isDraw ? styles.resultBtnActive : ''}`}
+          >
+            {isDraw ? 'Drew' : 'Defeated'}
+          </button>
 
-        <select
-          value={player2Id}
-          onChange={(e) => setPlayer2Id(e.target.value)}
-          required
-        >
-          {player2Options.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.nickname}
-            </option>
-          ))}
-        </select>
+          <select
+            value={player2Id}
+            onChange={(e) => setPlayer2Id(e.target.value)}
+            required
+            className={styles.playerSelect}
+          >
+            {player2Options.map((p) => (
+              <option key={p.id} value={p.id}>{p.nickname}</option>
+            ))}
+          </select>
+        </div>
 
-        <select value={timeControl} onChange={(e) => setTimeControl(e.target.value)}>
-          {CATEGORY_ORDER.map((cat) => (
-            <optgroup
-              key={cat}
-              label={cat.charAt(0).toUpperCase() + cat.slice(1)}
-            >
-              {TIME_CONTROLS[cat].map((tc) => (
-                <option key={tc} value={tc}>
-                  {tc}
-                </option>
+        <div className={styles.fieldGroup}>
+          <div>
+            <label>Time Control</label>
+            <select value={timeControl} onChange={(e) => setTimeControl(e.target.value)}>
+              {CATEGORY_ORDER.map((cat) => (
+                <optgroup key={cat} label={cat.charAt(0).toUpperCase() + cat.slice(1)}>
+                  {TIME_CONTROLS[cat].map((tc) => (
+                    <option key={tc} value={tc}>{tc}</option>
+                  ))}
+                </optgroup>
               ))}
-            </optgroup>
-          ))}
-        </select>
-      </div>
+            </select>
+          </div>
+          <div>
+            <label>Date & Time</label>
+            <input
+              type="datetime-local"
+              value={gameDate}
+              onChange={(e) => setGameDate(e.target.value)}
+              required
+            />
+          </div>
+        </div>
 
-      <div>
-        <input
-          type="datetime-local"
-          value={gameDate}
-          onChange={(e) => setGameDate(e.target.value)}
-          required
-        />
-      </div>
+        <div className={styles.photoRow}>
+          <div>
+            <p className={styles.photoLabel}>
+              {players.find((p) => p.id === player1Id)?.nickname ?? 'Player 1'} photo
+            </p>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setPlayer1File(e.target.files?.[0] ?? null)}
+            />
+          </div>
+          <div>
+            <p className={styles.photoLabel}>
+              {players.find((p) => p.id === player2Id)?.nickname ?? 'Player 2'} photo
+            </p>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setPlayer2File(e.target.files?.[0] ?? null)}
+            />
+          </div>
+        </div>
 
-      <div>
-        <label>
-          {players.find((p) => p.id === player1Id)?.nickname ?? 'Player 1'} photo
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setPlayer1File(e.target.files?.[0] ?? null)}
-          />
-        </label>
-        <label>
-          {players.find((p) => p.id === player2Id)?.nickname ?? 'Player 2'} photo
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setPlayer2File(e.target.files?.[0] ?? null)}
-          />
-        </label>
-      </div>
+        {state?.error && <p role="alert">{state.error}</p>}
 
-      {state?.error && <p role="alert">{state.error}</p>}
-
-      <button type="submit" disabled={pending}>
-        {pending ? 'Saving…' : 'Save Changes'}
-      </button>
-    </form>
+        <button type="submit" disabled={pending}>
+          {pending ? 'Saving…' : 'Save Changes'}
+        </button>
+      </form>
+    </div>
   )
 }

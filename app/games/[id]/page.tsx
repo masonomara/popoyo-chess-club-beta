@@ -4,17 +4,18 @@ import { createClient } from '@/lib/supabase/server'
 import RealtimeComments from '@/app/components/RealtimeComments'
 import InlineSignUp from '@/app/components/InlineSignUp'
 import type { Tables } from '@/app/types/database'
+import styles from './page.module.css'
 
 type CommentWithProfile = Tables<'comments'> & { profiles: Tables<'profiles'> | null }
 
-function resultLabel(
+function resultSummary(
   result: Tables<'games'>['result'],
-  player1Nickname: string,
-  player2Nickname: string
+  p1: string,
+  p2: string
 ): string {
-  if (result === 'draw') return `${player1Nickname} drew ${player2Nickname}`
-  if (result === 'player1_win') return `${player1Nickname} defeated ${player2Nickname}`
-  return `${player2Nickname} defeated ${player1Nickname}`
+  if (result === 'draw') return 'Draw'
+  if (result === 'player1_win') return `${p1} won`
+  return `${p2} won`
 }
 
 export default async function GameDetailPage({
@@ -60,48 +61,88 @@ export default async function GameDetailPage({
   }
 
   const typedComments = (comments ?? []) as CommentWithProfile[]
+  const p1Color = game.player1_color
+  const p2Color = p1Color === 'white' ? 'black' : 'white'
 
   return (
-    <main>
-      <section>
-        <div>
-          <div>
-            <p>{game.player1.country} {game.player1.nickname}</p>
-            <p>{game.player1_color === 'white' ? 'White' : 'Black'}</p>
+    <>
+      <Link href="/" className={styles.backLink}>
+        ← All games
+      </Link>
+
+      <div className={styles.playersPanel}>
+        <div className={styles.playersGrid}>
+          <div className={styles.playerCol}>
+            <p className={styles.playerName}>
+              {game.player1.country} {game.player1.nickname}
+            </p>
+            <span className={styles.colorChip}>
+              <span
+                className={`${styles.colorDot} ${p1Color === 'white' ? styles.colorDotWhite : styles.colorDotBlack}`}
+              />
+              {p1Color === 'white' ? 'White' : 'Black'}
+            </span>
             {game.player1_photo_url && (
-              <img src={game.player1_photo_url} alt={`${game.player1.nickname} photo`} />
+              <img
+                className={styles.playerPhoto}
+                src={game.player1_photo_url}
+                alt={`${game.player1.nickname} photo`}
+              />
             )}
           </div>
 
-          <div>
-            <p>{resultLabel(game.result, game.player1.nickname, game.player2.nickname)}</p>
-            <p>{game.time_control} · {game.time_control_category}</p>
-            <p>{new Date(game.game_date).toLocaleDateString()}</p>
+          <div className={styles.resultCallout}>
+            <p className={styles.resultText}>
+              {resultSummary(game.result, game.player1.nickname, game.player2.nickname)}
+            </p>
+            <p className={styles.tcText}>{game.time_control} · {game.time_control_category}</p>
+            <p className={styles.dateText}>
+              {new Date(game.game_date).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              })}
+            </p>
           </div>
 
-          <div>
-            <p>{game.player2.country} {game.player2.nickname}</p>
-            <p>{game.player1_color === 'white' ? 'Black' : 'White'}</p>
+          <div className={`${styles.playerCol} ${styles.playerColRight}`}>
+            <p className={styles.playerName}>
+              {game.player2.country} {game.player2.nickname}
+            </p>
+            <span className={styles.colorChip}>
+              <span
+                className={`${styles.colorDot} ${p2Color === 'white' ? styles.colorDotWhite : styles.colorDotBlack}`}
+              />
+              {p2Color === 'white' ? 'White' : 'Black'}
+            </span>
             {game.player2_photo_url && (
-              <img src={game.player2_photo_url} alt={`${game.player2.nickname} photo`} />
+              <img
+                className={styles.playerPhoto}
+                src={game.player2_photo_url}
+                alt={`${game.player2.nickname} photo`}
+              />
             )}
           </div>
         </div>
 
         {canEdit && (
-          <Link href={`/games/${id}/edit`}>Edit</Link>
+          <div className={styles.editRow}>
+            <Link href={`/games/${id}/edit`} className={styles.editLink}>
+              ✎ Edit game
+            </Link>
+          </div>
         )}
-      </section>
+      </div>
 
-      <section>
-        <h2>Comments</h2>
+      <div className={styles.commentsSection}>
+        <h2 className={styles.commentsTitle}>Comments</h2>
         <RealtimeComments
           gameId={id}
           initialComments={typedComments}
           userId={user?.id ?? null}
         />
         {!user && <InlineSignUp />}
-      </section>
-    </main>
+      </div>
+    </>
   )
 }

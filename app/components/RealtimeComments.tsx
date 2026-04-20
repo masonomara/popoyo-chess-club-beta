@@ -4,6 +4,7 @@ import { useEffect, useState, useActionState, useRef, startTransition } from 're
 import { createClient } from '@/lib/supabase/client'
 import { submitComment, type CommentState } from '@/app/actions/comments'
 import type { Tables } from '@/app/types/database'
+import styles from './RealtimeComments.module.css'
 
 type CommentWithProfile = Tables<'comments'> & { profiles: Tables<'profiles'> | null }
 
@@ -77,19 +78,31 @@ export default function RealtimeComments({
 
   return (
     <div>
-      <ul>
-        {comments.map((comment) => (
-          <li key={comment.id}>
-            <span>{comment.profiles?.nickname ?? 'Unknown'}</span>
-            <span> · </span>
-            <span>{new Date(comment.created_at).toLocaleDateString()}</span>
-            <p>{comment.body}</p>
-          </li>
-        ))}
-      </ul>
+      {comments.length === 0 ? (
+        <p className={styles.empty}>No comments yet.</p>
+      ) : (
+        <ul className={styles.list}>
+          {comments.map((comment) => (
+            <li key={comment.id} className={styles.comment}>
+              <div className={styles.commentMeta}>
+                <span className={styles.commentAuthor}>
+                  {comment.profiles?.nickname ?? 'Unknown'}
+                </span>
+                <span className={styles.commentDate}>
+                  {new Date(comment.created_at).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </span>
+              </div>
+              <p className={styles.commentBody}>{comment.body}</p>
+            </li>
+          ))}
+        </ul>
+      )}
 
       {userId && (
-        <form ref={formRef} onSubmit={handleSubmit}>
+        <form ref={formRef} onSubmit={handleSubmit} className={styles.form}>
           <input type="hidden" name="game_id" value={gameId} />
           <textarea
             name="body"
@@ -99,8 +112,8 @@ export default function RealtimeComments({
             disabled={pending}
           />
           {state?.error && <p role="alert">{state.error}</p>}
-          <button type="submit" disabled={pending}>
-            {pending ? 'Posting…' : 'Post'}
+          <button type="submit" disabled={pending} className={styles.postBtn}>
+            {pending ? 'Posting…' : 'Post comment'}
           </button>
         </form>
       )}

@@ -121,17 +121,17 @@ Source of truth: `docs/01-goal.md` · `supabase/schema.sql` · `app/types/databa
 
 ### Phase 5 — Styling Pass
 
-- [ ] Add CSS design tokens to `app/globals.css` (`--accent`, `--bg`, `--surface`, `--border`, `--text`, `--text-muted`, `--radius`, `--font`)
-- [ ] Style `app/layout.tsx` — dark background, max-width 1100px centered, 24px horizontal padding
-- [ ] Style winner cards — side-by-side desktop, stacked mobile; accent color on ELO badge
-- [ ] Style leaderboard table — rank, flag + nickname, ELO, W/L/D; toggle above table uses accent color for active state
-- [ ] Style game history rows — compact; result badge chip (W/L/D); player names; time control tag; date
-- [ ] Style `AddGameSheet` — slides up with `transform: translateY`, `backdrop-filter: blur`
-- [ ] Style game detail page — two-column player display with color chips, result callout, comment thread
-- [ ] Style `/anteup` — centered auth card, two tab forms (Sign In / Sign Up)
-- [ ] Style `/admin` page — list table, inline add form
-- [ ] Style `/weekly` and `/monthly` pages — consistent with homepage winner card design
-- [ ] Add `.module.css` file to every component and page
+- [x] Add CSS design tokens to `app/globals.css` (`--accent`, `--bg`, `--surface`, `--border`, `--text`, `--text-muted`, `--radius`, `--font`)
+- [x] Style `app/layout.tsx` — dark background, max-width 1100px centered, 24px horizontal padding
+- [x] Style winner cards — side-by-side desktop, stacked mobile; accent color on ELO badge
+- [x] Style leaderboard table — rank, flag + nickname, ELO, W/L/D; toggle above table uses accent color for active state
+- [x] Style game history rows — compact; result badge chip (W/L/D); player names; time control tag; date
+- [x] Style `AddGameSheet` — slides up with `transform: translateY`, `backdrop-filter: blur`
+- [x] Style game detail page — two-column player display with color chips, result callout, comment thread
+- [x] Style `/anteup` — centered auth card, two tab forms (Sign In / Sign Up)
+- [x] Style `/admin` page — list table, inline add form
+- [x] Style `/weekly` and `/monthly` pages — consistent with homepage winner card design
+- [x] Add `.module.css` file to every component and page
 - [ ] [manual] Confirm homepage renders at 375px width with no layout breaks
 - [ ] [manual] Confirm teal accent on primary buttons and active leaderboard toggle
 - [ ] [manual] Confirm all four homepage sections visible without scrolling past fold on desktop

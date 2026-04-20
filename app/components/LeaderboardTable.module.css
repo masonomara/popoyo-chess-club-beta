@@ -1,0 +1,110 @@
+.toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 4px;
+  width: fit-content;
+}
+
+.toggleBtn {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.toggleBtn:hover:not(.active) {
+  color: var(--text);
+  background: var(--surface-raised);
+}
+
+.toggleBtnActive {
+  background: var(--accent);
+  color: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.table th {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.table th:first-child {
+  width: 36px;
+  text-align: center;
+}
+
+.table th:nth-child(n+3) {
+  text-align: right;
+  width: 52px;
+}
+
+.table td {
+  padding: 12px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover td {
+  background: var(--surface);
+}
+
+.rankCell {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.rank1 {
+  color: #f59e0b;
+}
+
+.playerCell {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.eloCell {
+  text-align: right;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.statCell {
+  text-align: right;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.empty {
+  padding: 32px 12px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  text-align: center;
+}

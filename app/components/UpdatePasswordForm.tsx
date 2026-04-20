@@ -2,6 +2,7 @@
 
 import { useActionState, startTransition } from 'react'
 import { resetPassword, type AuthState } from '@/app/actions/auth'
+import styles from './UpdatePasswordForm.module.css'
 
 export default function UpdatePasswordForm() {
   const [state, dispatch, pending] = useActionState<AuthState, FormData>(
@@ -15,19 +16,15 @@ export default function UpdatePasswordForm() {
     const formData = new FormData(form)
     const password = formData.get('password') as string
     const confirm = formData.get('confirm') as string
-
-    if (password !== confirm) {
-      return
-    }
-
+    if (password !== confirm) return
     startTransition(() => {
       dispatch(formData)
     })
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
+    <form onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.field}>
         <label htmlFor="new-password">New password</label>
         <input
           id="new-password"
@@ -39,7 +36,7 @@ export default function UpdatePasswordForm() {
           disabled={pending}
         />
       </div>
-      <div>
+      <div className={styles.field}>
         <label htmlFor="confirm-password">Confirm password</label>
         <input
           id="confirm-password"

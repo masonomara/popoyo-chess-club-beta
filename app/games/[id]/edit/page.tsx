@@ -2,6 +2,7 @@ import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import EditGameForm from '@/app/components/EditGameForm'
+import styles from './page.module.css'
 
 export default async function EditGamePage({
   params,
@@ -18,16 +19,8 @@ export default async function EditGamePage({
   if (!user) redirect('/')
 
   const [{ data: game }, { data: players }, { data: profile }] = await Promise.all([
-    supabase
-      .from('games')
-      .select('*')
-      .eq('id', id)
-      .single(),
-    supabase
-      .from('profiles')
-      .select('*')
-      .in('role', ['admin', 'member'])
-      .order('nickname'),
+    supabase.from('games').select('*').eq('id', id).single(),
+    supabase.from('profiles').select('*').in('role', ['admin', 'member']).order('nickname'),
     supabase.from('profiles').select('role').eq('id', user.id).single(),
   ])
 
@@ -39,10 +32,12 @@ export default async function EditGamePage({
   if (!isAdmin && !isSubmitter) redirect('/')
 
   return (
-    <main>
-      <h1>Edit Game</h1>
-      <Link href={`/games/${id}`}>← Back to game</Link>
+    <>
+      <Link href={`/games/${id}`} className={styles.backLink}>
+        ← Back to game
+      </Link>
+      <h1 className={styles.title}>Edit Game</h1>
       <EditGameForm game={game} players={players ?? []} />
-    </main>
+    </>
   )
 }

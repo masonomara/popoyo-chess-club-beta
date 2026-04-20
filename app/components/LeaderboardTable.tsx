@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { Tables } from '@/app/types/database'
+import styles from './LeaderboardTable.module.css'
 
 type RatingWithProfile = Tables<'player_ratings'> & {
   profiles: Tables<'profiles'>
@@ -60,46 +61,61 @@ export default function LeaderboardTable({
 
   return (
     <div>
-      <div role="group" aria-label="Sort leaderboard">
+      <div
+        role="group"
+        aria-label="Sort leaderboard"
+        className={styles.toggle}
+      >
         {(Object.keys(SORT_LABELS) as SortKey[]).map((key) => (
           <button
             key={key}
+            type="button"
             onClick={() => setSortBy(key)}
             aria-pressed={sortBy === key}
+            className={`${styles.toggleBtn} ${sortBy === key ? styles.toggleBtnActive : ''}`}
           >
             {SORT_LABELS[key]}
           </button>
         ))}
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Player</th>
-            <th>ELO</th>
-            <th>W</th>
-            <th>L</th>
-            <th>D</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.map((row, i) => {
-            const stats = getWindowStats(row, sortBy)
-            return (
-              <tr key={row.player_id}>
-                <td>{i + 1}</td>
-                <td>
-                  {row.profiles.country} {row.profiles.nickname}
-                </td>
-                <td>{stats.elo}</td>
-                <td>{stats.wins}</td>
-                <td>{stats.losses}</td>
-                <td>{stats.draws}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+
+      {sorted.length === 0 ? (
+        <p className={styles.empty}>No players with 3+ games in this period.</p>
+      ) : (
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Player</th>
+              <th>ELO</th>
+              <th>W</th>
+              <th>L</th>
+              <th>D</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((row, i) => {
+              const stats = getWindowStats(row, sortBy)
+              return (
+                <tr key={row.player_id}>
+                  <td className={`${styles.rankCell} ${i === 0 ? styles.rank1 : ''}`}>
+                    {i + 1}
+                  </td>
+                  <td>
+                    <span className={styles.playerCell}>
+                      {row.profiles.country} {row.profiles.nickname}
+                    </span>
+                  </td>
+                  <td className={styles.eloCell}>{stats.elo}</td>
+                  <td className={styles.statCell}>{stats.wins}</td>
+                  <td className={styles.statCell}>{stats.losses}</td>
+                  <td className={styles.statCell}>{stats.draws}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      )}
     </div>
   )
 }

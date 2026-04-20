@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ProfileForm from '@/app/components/ProfileForm'
+import styles from './page.module.css'
 
 export default async function ProfilePage() {
   const supabase = await createClient()
@@ -20,13 +21,13 @@ export default async function ProfilePage() {
   if (!profile) redirect('/')
 
   return (
-    <main>
-      <h1>Profile Settings</h1>
+    <>
+      <h1 className={styles.title}>Profile Settings</h1>
       <ProfileForm
         nickname={profile.nickname}
         country={profile.country}
         email={profile.email}
       />
-    </main>
+    </>
   )
 }

@@ -4,6 +4,7 @@ import { useState, useActionState, useEffect, useRef, startTransition } from 're
 import { createClient } from '@/lib/supabase/client'
 import { submitGame, type GameState } from '@/app/actions/games'
 import type { Tables } from '@/app/types/database'
+import styles from './AddGameSheet.module.css'
 
 const CATEGORY_ORDER = ['bullet', 'blitz', 'rapid', 'classical'] as const
 
@@ -83,9 +84,7 @@ export default function AddGameSheet({
   async function uploadFile(file: File, label: string): Promise<string | null> {
     const ext = file.name.split('.').pop() ?? 'jpg'
     const path = `${Date.now()}-${label}.${ext}`
-    const { error } = await supabase.storage
-      .from('game-photos')
-      .upload(path, file)
+    const { error } = await supabase.storage.from('game-photos').upload(path, file)
     if (error) return null
     return supabase.storage.from('game-photos').getPublicUrl(path).data.publicUrl
   }
@@ -128,56 +127,75 @@ export default function AddGameSheet({
 
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)}>
-        Add Game
+      <button type="button" onClick={() => setOpen(true)} className={styles.trigger}>
+        + Add Game
       </button>
 
-      {open && (
-        <div role="dialog" aria-modal="true" aria-label="Add game">
-          <div aria-hidden="true" onClick={() => !pending && setOpen(false)} />
-          <div>
-            <form onSubmit={handleSubmit}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Add game"
+        className={`${styles.dialog} ${open ? styles.dialogOpen : ''}`}
+      >
+        <div
+          aria-hidden="true"
+          onClick={() => !pending && setOpen(false)}
+          className={`${styles.backdrop} ${open ? styles.backdropOpen : ''}`}
+        />
+        <div className={`${styles.sheet} ${open ? styles.sheetOpen : ''}`}>
+          <div className={styles.handle} />
+          <p className={styles.sheetTitle}>Add Game</p>
+
+          <form onSubmit={handleSubmit}>
+            <div className={styles.gameRow}>
+              <select
+                value={player1Id}
+                onChange={(e) => handlePlayer1Change(e.target.value)}
+                required
+                className={styles.playerSelect}
+              >
+                {players.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nickname}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setPlayer1Color((c) => (c === 'white' ? 'black' : 'white'))
+                }
+                className={`${styles.colorBtn} ${player1Color === 'white' ? styles.colorBtnWhite : ''}`}
+              >
+                {player1Color === 'white' ? '○ White' : '● Black'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsDraw((d) => !d)}
+                className={`${styles.resultBtn} ${isDraw ? styles.resultBtnActive : ''}`}
+              >
+                {isDraw ? 'Drew' : 'Defeated'}
+              </button>
+
+              <select
+                value={player2Id}
+                onChange={(e) => setPlayer2Id(e.target.value)}
+                required
+                className={styles.playerSelect}
+              >
+                {player2Options.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nickname}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.fieldGroup}>
               <div>
-                <select
-                  value={player1Id}
-                  onChange={(e) => handlePlayer1Change(e.target.value)}
-                  required
-                >
-                  {players.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.nickname}
-                    </option>
-                  ))}
-                </select>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setPlayer1Color((c) => (c === 'white' ? 'black' : 'white'))
-                  }
-                >
-                  {player1Color === 'white' ? 'White' : 'Black'}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setIsDraw((d) => !d)}
-                >
-                  {isDraw ? 'Drew' : 'Defeats'}
-                </button>
-
-                <select
-                  value={player2Id}
-                  onChange={(e) => setPlayer2Id(e.target.value)}
-                  required
-                >
-                  {player2Options.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.nickname}
-                    </option>
-                  ))}
-                </select>
-
+                <label>Time Control</label>
                 <select
                   value={timeControl}
                   onChange={(e) => setTimeControl(e.target.value)}
@@ -198,6 +216,7 @@ export default function AddGameSheet({
               </div>
 
               <div>
+                <label>Date & Time</label>
                 <input
                   type="datetime-local"
                   value={gameDate}
@@ -205,44 +224,49 @@ export default function AddGameSheet({
                   required
                 />
               </div>
+            </div>
 
+            <div className={styles.photoRow}>
               <div>
-                <label>
+                <p className={styles.photoLabel}>
                   {players.find((p) => p.id === player1Id)?.nickname ?? 'Player 1'} photo
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setPlayer1File(e.target.files?.[0] ?? null)}
-                  />
-                </label>
-                <label>
-                  {players.find((p) => p.id === player2Id)?.nickname ?? 'Player 2'} photo
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setPlayer2File(e.target.files?.[0] ?? null)}
-                  />
-                </label>
+                </p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setPlayer1File(e.target.files?.[0] ?? null)}
+                />
               </div>
-
-              {state?.error && <p role="alert">{state.error}</p>}
-
               <div>
-                <button type="submit" disabled={pending}>
-                  {pending ? 'Saving…' : 'Save Game'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  disabled={pending}
-                >
-                  Cancel
-                </button>
+                <p className={styles.photoLabel}>
+                  {players.find((p) => p.id === player2Id)?.nickname ?? 'Player 2'} photo
+                </p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setPlayer2File(e.target.files?.[0] ?? null)}
+                />
               </div>
-            </form>
-          </div>
+            </div>
+
+            {state?.error && <p role="alert">{state.error}</p>}
+
+            <div className={styles.actions}>
+              <button type="submit" disabled={pending} className={styles.saveBtn}>
+                {pending ? 'Saving…' : 'Save Game'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                disabled={pending}
+                className={styles.cancelBtn}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
-      )}
+      </div>
     </>
   )
 }

@@ -1,0 +1,57 @@
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: 24px;
+}
+
+.comment {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+.commentMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.commentAuthor {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.commentDate {
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+}
+
+.commentBody {
+  font-size: 0.9375rem;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.empty {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  padding: 16px 0;
+  margin-bottom: 24px;
+}
+
+/* ── Comment form ────────────────────────────────── */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.postBtn {
+  align-self: flex-end;
+}
