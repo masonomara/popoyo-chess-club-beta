@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
-import type { Database } from '@/app/types/database'
+import type { Database } from '@/types/database'
 
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })

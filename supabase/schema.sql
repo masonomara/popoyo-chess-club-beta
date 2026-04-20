@@ -487,7 +487,7 @@ BEGIN
   FOR game_rec IN
     SELECT player1_id, player2_id, result
     FROM games
-    ORDER BY game_date ASC, created_at ASC
+    ORDER BY game_date ASC
   LOOP
     INSERT INTO _elo_work (player_id) VALUES (game_rec.player1_id) ON CONFLICT DO NOTHING;
     INSERT INTO _elo_work (player_id) VALUES (game_rec.player2_id) ON CONFLICT DO NOTHING;
@@ -585,7 +585,7 @@ BEGIN
     SELECT player1_id, player2_id, result
     FROM games
     WHERE game_date >= week_start
-    ORDER BY game_date ASC, created_at ASC
+    ORDER BY game_date ASC
   LOOP
     INSERT INTO _elo_work (player_id) VALUES (game_rec.player1_id) ON CONFLICT DO NOTHING;
     INSERT INTO _elo_work (player_id) VALUES (game_rec.player2_id) ON CONFLICT DO NOTHING;
@@ -678,7 +678,7 @@ BEGIN
     SELECT player1_id, player2_id, result
     FROM games
     WHERE game_date >= month_start
-    ORDER BY game_date ASC, created_at ASC
+    ORDER BY game_date ASC
   LOOP
     INSERT INTO _elo_work (player_id) VALUES (game_rec.player1_id) ON CONFLICT DO NOTHING;
     INSERT INTO _elo_work (player_id) VALUES (game_rec.player2_id) ON CONFLICT DO NOTHING;
@@ -890,15 +890,71 @@ DECLARE
   victory_photo TEXT;
   window_start  TIMESTAMPTZ := p_week_start::TIMESTAMPTZ;
   window_end    TIMESTAMPTZ := p_week_start::TIMESTAMPTZ + INTERVAL '7 days';
+  game_rec      RECORD;
+  p1_elo        NUMERIC;
+  p2_elo        NUMERIC;
+  p1_expected   NUMERIC;
+  p1_actual     NUMERIC;
+  p2_actual     NUMERIC;
+  k             NUMERIC := 64;
 BEGIN
-  SELECT pr.player_id, pr.weekly_elo,
-         pr.weekly_wins, pr.weekly_losses, pr.weekly_draws, pr.weekly_games_played
-  INTO winner_id, winner_elo,
-       winner_wins, winner_losses, winner_draws, winner_games
-  FROM player_ratings pr
-  WHERE pr.weekly_games_played >= 3
-  ORDER BY pr.weekly_elo DESC
+  DROP TABLE IF EXISTS _weekly_winner_work;
+  CREATE TEMP TABLE _weekly_winner_work (
+    player_id    UUID    PRIMARY KEY,
+    elo          NUMERIC NOT NULL DEFAULT 1500,
+    games_played INTEGER NOT NULL DEFAULT 0,
+    wins         INTEGER NOT NULL DEFAULT 0,
+    losses       INTEGER NOT NULL DEFAULT 0,
+    draws        INTEGER NOT NULL DEFAULT 0
+  );
+
+  INSERT INTO _weekly_winner_work (player_id)
+  SELECT id FROM profiles WHERE role IN ('admin', 'member');
+
+  FOR game_rec IN
+    SELECT player1_id, player2_id, result
+    FROM games
+    WHERE game_date >= window_start AND game_date < window_end
+    ORDER BY game_date ASC
+  LOOP
+    INSERT INTO _weekly_winner_work (player_id) VALUES (game_rec.player1_id) ON CONFLICT DO NOTHING;
+    INSERT INTO _weekly_winner_work (player_id) VALUES (game_rec.player2_id) ON CONFLICT DO NOTHING;
+
+    SELECT elo INTO p1_elo FROM _weekly_winner_work WHERE player_id = game_rec.player1_id;
+    SELECT elo INTO p2_elo FROM _weekly_winner_work WHERE player_id = game_rec.player2_id;
+
+    p1_expected := 1.0 / (1.0 + power(10.0, (p2_elo - p1_elo) / 400.0));
+
+    IF    game_rec.result = 'player1_win' THEN p1_actual := 1.0; p2_actual := 0.0;
+    ELSIF game_rec.result = 'player2_win' THEN p1_actual := 0.0; p2_actual := 1.0;
+    ELSE                                        p1_actual := 0.5; p2_actual := 0.5;
+    END IF;
+
+    UPDATE _weekly_winner_work SET
+      elo          = elo + k * (p1_actual - p1_expected),
+      games_played = games_played + 1,
+      wins         = wins   + CASE WHEN game_rec.result = 'player1_win' THEN 1 ELSE 0 END,
+      losses       = losses + CASE WHEN game_rec.result = 'player2_win' THEN 1 ELSE 0 END,
+      draws        = draws  + CASE WHEN game_rec.result = 'draw'        THEN 1 ELSE 0 END
+    WHERE player_id = game_rec.player1_id;
+
+    UPDATE _weekly_winner_work SET
+      elo          = elo + k * (p2_actual - (1.0 - p1_expected)),
+      games_played = games_played + 1,
+      wins         = wins   + CASE WHEN game_rec.result = 'player2_win' THEN 1 ELSE 0 END,
+      losses       = losses + CASE WHEN game_rec.result = 'player1_win' THEN 1 ELSE 0 END,
+      draws        = draws  + CASE WHEN game_rec.result = 'draw'        THEN 1 ELSE 0 END
+    WHERE player_id = game_rec.player2_id;
+  END LOOP;
+
+  SELECT player_id, ROUND(elo)::INTEGER, wins, losses, draws, games_played
+  INTO winner_id, winner_elo, winner_wins, winner_losses, winner_draws, winner_games
+  FROM _weekly_winner_work
+  WHERE games_played >= 3
+  ORDER BY elo DESC
   LIMIT 1;
+
+  DROP TABLE IF EXISTS _weekly_winner_work;
 
   IF winner_id IS NULL THEN RETURN; END IF;
 
@@ -956,15 +1012,71 @@ DECLARE
   victory_photo TEXT;
   window_start  TIMESTAMPTZ := p_month_start::TIMESTAMPTZ;
   window_end    TIMESTAMPTZ := p_month_start::TIMESTAMPTZ + INTERVAL '1 month';
+  game_rec      RECORD;
+  p1_elo        NUMERIC;
+  p2_elo        NUMERIC;
+  p1_expected   NUMERIC;
+  p1_actual     NUMERIC;
+  p2_actual     NUMERIC;
+  k             NUMERIC := 48;
 BEGIN
-  SELECT pr.player_id, pr.monthly_elo,
-         pr.monthly_wins, pr.monthly_losses, pr.monthly_draws, pr.monthly_games_played
-  INTO winner_id, winner_elo,
-       winner_wins, winner_losses, winner_draws, winner_games
-  FROM player_ratings pr
-  WHERE pr.monthly_games_played >= 3
-  ORDER BY pr.monthly_elo DESC
+  DROP TABLE IF EXISTS _monthly_winner_work;
+  CREATE TEMP TABLE _monthly_winner_work (
+    player_id    UUID    PRIMARY KEY,
+    elo          NUMERIC NOT NULL DEFAULT 1500,
+    games_played INTEGER NOT NULL DEFAULT 0,
+    wins         INTEGER NOT NULL DEFAULT 0,
+    losses       INTEGER NOT NULL DEFAULT 0,
+    draws        INTEGER NOT NULL DEFAULT 0
+  );
+
+  INSERT INTO _monthly_winner_work (player_id)
+  SELECT id FROM profiles WHERE role IN ('admin', 'member');
+
+  FOR game_rec IN
+    SELECT player1_id, player2_id, result
+    FROM games
+    WHERE game_date >= window_start AND game_date < window_end
+    ORDER BY game_date ASC
+  LOOP
+    INSERT INTO _monthly_winner_work (player_id) VALUES (game_rec.player1_id) ON CONFLICT DO NOTHING;
+    INSERT INTO _monthly_winner_work (player_id) VALUES (game_rec.player2_id) ON CONFLICT DO NOTHING;
+
+    SELECT elo INTO p1_elo FROM _monthly_winner_work WHERE player_id = game_rec.player1_id;
+    SELECT elo INTO p2_elo FROM _monthly_winner_work WHERE player_id = game_rec.player2_id;
+
+    p1_expected := 1.0 / (1.0 + power(10.0, (p2_elo - p1_elo) / 400.0));
+
+    IF    game_rec.result = 'player1_win' THEN p1_actual := 1.0; p2_actual := 0.0;
+    ELSIF game_rec.result = 'player2_win' THEN p1_actual := 0.0; p2_actual := 1.0;
+    ELSE                                        p1_actual := 0.5; p2_actual := 0.5;
+    END IF;
+
+    UPDATE _monthly_winner_work SET
+      elo          = elo + k * (p1_actual - p1_expected),
+      games_played = games_played + 1,
+      wins         = wins   + CASE WHEN game_rec.result = 'player1_win' THEN 1 ELSE 0 END,
+      losses       = losses + CASE WHEN game_rec.result = 'player2_win' THEN 1 ELSE 0 END,
+      draws        = draws  + CASE WHEN game_rec.result = 'draw'        THEN 1 ELSE 0 END
+    WHERE player_id = game_rec.player1_id;
+
+    UPDATE _monthly_winner_work SET
+      elo          = elo + k * (p2_actual - (1.0 - p1_expected)),
+      games_played = games_played + 1,
+      wins         = wins   + CASE WHEN game_rec.result = 'player2_win' THEN 1 ELSE 0 END,
+      losses       = losses + CASE WHEN game_rec.result = 'player1_win' THEN 1 ELSE 0 END,
+      draws        = draws  + CASE WHEN game_rec.result = 'draw'        THEN 1 ELSE 0 END
+    WHERE player_id = game_rec.player2_id;
+  END LOOP;
+
+  SELECT player_id, ROUND(elo)::INTEGER, wins, losses, draws, games_played
+  INTO winner_id, winner_elo, winner_wins, winner_losses, winner_draws, winner_games
+  FROM _monthly_winner_work
+  WHERE games_played >= 3
+  ORDER BY elo DESC
   LIMIT 1;
+
+  DROP TABLE IF EXISTS _monthly_winner_work;
 
   IF winner_id IS NULL THEN RETURN; END IF;
 
