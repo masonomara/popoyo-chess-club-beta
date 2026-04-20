@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState, useActionState } from 'react'
 import { signIn, signUp, type AuthState } from '@/app/actions/auth'
 
@@ -35,6 +36,7 @@ function SignInForm() {
       <button type="submit" disabled={pending}>
         {pending ? 'Signing in…' : 'Sign In'}
       </button>
+      <Link href="/forgot-password">Forgot password?</Link>
     </form>
   )
 }

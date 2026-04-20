@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useActionState, useEffect, useRef } from 'react'
+import { useState, useActionState, useEffect, useRef, startTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { submitGame, type GameState } from '@/app/actions/games'
 import type { Tables } from '@/app/types/database'
@@ -111,7 +111,9 @@ export default function AddGameSheet({
     if (p2Url) formData.set('player2_photo_url', p2Url)
 
     submittedRef.current = true
-    dispatch(formData)
+    startTransition(() => {
+      dispatch(formData)
+    })
   }
 
   function handlePlayer1Change(newId: string) {

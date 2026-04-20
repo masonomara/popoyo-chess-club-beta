@@ -53,3 +53,41 @@ export async function signUp(
 
   redirect('/')
 }
+
+export async function forgotPassword(
+  _prevState: AuthState,
+  formData: FormData
+): Promise<AuthState> {
+  const supabase = await createClient()
+
+  const email = formData.get('email') as string
+  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${origin}/auth/callback?next=/update-password`,
+  })
+
+  if (error) return { error: error.message }
+
+  return null
+}
+
+export async function resetPassword(
+  _prevState: AuthState,
+  formData: FormData
+): Promise<AuthState> {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return { error: 'Session expired. Request a new reset link.' }
+
+  const password = formData.get('password') as string
+
+  const { error } = await supabase.auth.updateUser({ password })
+
+  if (error) return { error: error.message }
+
+  redirect('/')
+}

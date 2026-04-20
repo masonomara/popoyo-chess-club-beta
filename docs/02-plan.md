@@ -72,32 +72,32 @@ Source of truth: `docs/01-goal.md` · `supabase/schema.sql` · `app/types/databa
 
 #### 4a. Game Detail Page + Comments + Realtime
 
-- [ ] Create `app/games/[id]/page.tsx` — async server component
-- [ ] Query `games` by `params.id` with two player profile joins
-- [ ] Query `comments` where `game_id = params.id` with author profiles, `ORDER BY created_at ASC`
-- [ ] Display players (nickname + country), colors, result, time control, `game_date`, photos if present
-- [ ] Show inline viewer sign-up form (not a link to `/anteup`) for unauthenticated users in the comment section
-- [ ] Show comment form for authenticated users
-- [ ] Create `app/actions/comments.ts` — `submitComment(formData)` inserting into `comments`, then `revalidatePath('/games/[id]')`
-- [ ] Create `app/components/RealtimeComments.tsx` — `'use client'`, receives initial comments as prop, subscribes to `postgres_changes` on `comments` table filtered to `game_id=eq.${gameId}`
+- [x] Create `app/games/[id]/page.tsx` — async server component
+- [x] Query `games` by `params.id` with two player profile joins
+- [x] Query `comments` where `game_id = params.id` with author profiles, `ORDER BY created_at ASC`
+- [x] Display players (nickname + country), colors, result, time control, `game_date`, photos if present
+- [x] Show inline viewer sign-up form (not a link to `/anteup`) for unauthenticated users in the comment section
+- [x] Show comment form for authenticated users
+- [x] Create `app/actions/comments.ts` — `submitComment(formData)` inserting into `comments`, then `revalidatePath('/games/[id]')`
+- [x] Create `app/components/RealtimeComments.tsx` — `'use client'`, receives initial comments as prop, subscribes to `postgres_changes` on `comments` table filtered to `game_id=eq.${gameId}`
 - [ ] [manual] Open same game in two browser tabs — post comment in one, confirm it appears in the other without refresh
 
 #### 4b. Game Edit
 
-- [ ] Create `app/games/[id]/edit/page.tsx` — async server component
-- [ ] Add auth guard: redirect to `/` if user is not `admin` and did not submit the game (`submitted_by !== user.id`)
-- [ ] Render pre-populated game form (reuse `AddGameSheet` form fields as a full page, not a sheet)
-- [ ] Add `updateGame(gameId, formData)` to `app/actions/games.ts` — calls `supabase.rpc('update_game', { p_game_id, ...fields })`, then `revalidatePath('/')` and `revalidatePath('/games/[id]')`
-- [ ] Add "Edit" link on game detail page, visible only to `admin` or the game's submitter
+- [x] Create `app/games/[id]/edit/page.tsx` — async server component
+- [x] Add auth guard: redirect to `/` if user is not `admin` and did not submit the game (`submitted_by !== user.id`)
+- [x] Render pre-populated game form (reuse `AddGameSheet` form fields as a full page, not a sheet)
+- [x] Add `updateGame(gameId, formData)` to `app/actions/games.ts` — calls `supabase.rpc('update_game', { p_game_id, ...fields })`, then `revalidatePath('/')` and `revalidatePath('/games/[id]')`
+- [x] Add "Edit" link on game detail page, visible only to `admin` or the game's submitter
 - [ ] [manual] Edit a game's time control — verify change in Table Editor and in homepage history row
 
 #### 4c. Admin Panel — Approved Emails
 
-- [ ] Create `app/admin/page.tsx` — async server component with auth guard (redirect to `/` if `role !== 'admin'`)
-- [ ] Query `approved_emails` joined with `profiles` on `added_by`
-- [ ] Display list: email, added by (nickname), added at (`created_at`)
-- [ ] Create `app/actions/admin.ts` — `addApprovedEmail(formData)` inserting into `approved_emails`, then `revalidatePath('/admin')`
-- [ ] Create `app/actions/admin.ts` — `removeApprovedEmail(formData)` deleting from `approved_emails` by `id`, then `revalidatePath('/admin')`
+- [x] Create `app/admin/page.tsx` — async server component with auth guard (redirect to `/` if `role !== 'admin'`)
+- [x] Query `approved_emails` joined with `profiles` on `added_by`
+- [x] Display list: email, added by (nickname), added at (`created_at`)
+- [x] Create `app/actions/admin.ts` — `addApprovedEmail(formData)` inserting into `approved_emails`, then `revalidatePath('/admin')`
+- [x] Create `app/actions/admin.ts` — `removeApprovedEmail(formData)` deleting from `approved_emails` by `id`, then `revalidatePath('/admin')`
 - [ ] [manual] Set Gerry's password — Supabase Auth Dashboard → Users → gerry@popoyochess.club → Send Password Reset (or set directly)
 - [ ] [manual] Sign in as Gerry, navigate to `/admin` — confirm approved email list loads
 - [ ] [manual] Add a new email — confirm it appears and exists in Table Editor
@@ -105,18 +105,18 @@ Source of truth: `docs/01-goal.md` · `supabase/schema.sql` · `app/types/databa
 
 #### 4d. Historical Weekly Winners Page
 
-- [ ] Create `app/weekly/page.tsx` — async server component
-- [ ] Query `weekly_winners` joined with `profiles` on `player_id`, `ORDER BY week_start DESC`
-- [ ] Display: week date range, nickname, country flag, `peak_elo`, wins/losses/draws, `games_played`, `victory_photo_url`
-- [ ] Wire `next/link` from homepage week card → `/weekly`
+- [x] Create `app/weekly/page.tsx` — async server component
+- [x] Query `weekly_winners` joined with `profiles` on `player_id`, `ORDER BY week_start DESC`
+- [x] Display: week date range, nickname, country flag, `peak_elo`, wins/losses/draws, `games_played`, `victory_photo_url`
+- [x] Wire `next/link` from homepage week card → `/weekly`
 - [ ] [manual] Confirm `/weekly` shows 5 historical rows from seed data
 
 #### 4e. Historical Monthly Winners Page
 
-- [ ] Create `app/monthly/page.tsx` — async server component
-- [ ] Query `monthly_winners` joined with `profiles` on `player_id`, `ORDER BY month_start DESC`
-- [ ] Display: month label (e.g. "March 2026"), nickname, country flag, `peak_elo`, record, `games_played`, `victory_photo_url`
-- [ ] Wire `next/link` from homepage month card → `/monthly`
+- [x] Create `app/monthly/page.tsx` — async server component
+- [x] Query `monthly_winners` joined with `profiles` on `player_id`, `ORDER BY month_start DESC`
+- [x] Display: month label (e.g. "March 2026"), nickname, country flag, `peak_elo`, record, `games_played`, `victory_photo_url`
+- [x] Wire `next/link` from homepage month card → `/monthly`
 - [ ] [manual] Confirm `/monthly` shows 2 historical rows from seed data
 
 ### Phase 5 — Styling Pass
