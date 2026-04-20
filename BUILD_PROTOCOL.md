@@ -11,6 +11,7 @@
 **How:** Verify each of the following is installed and authenticated:
 
 - [Node.js](https://nodejs.org) (v18+)
+- [Next.js](https://nextjs.org) (v14+)
 - [GitHub CLI](https://cli.github.com) — run `gh auth login` to authenticate
 - [Claude Code](https://claude.ai/code)
 - [Vercel](https://vercel.com) account
@@ -21,7 +22,7 @@
 
 ### 2. Clone the project template and create a new GitHub repo
 
-**Why:** The template provides a pre-configured starting point including this protocol, spec file templates, Claude commands, and `CLAUDE.md`
+**Why:** The template provides a pre-configured starting point including the Next.js boilerplate, this protocol, spec file templates, Claude commands, and `CLAUDE.md`.
 
 **How:**
 
@@ -32,15 +33,21 @@ git remote remove origin
 gh repo create [project-name] --public --source=. --push
 ```
 
-### 3. Create a Next.js app with the recommended project settings
+### 3. The Next.js boilerplate is already included in this template
 
-**Why:** TypeScript, ESLint, App Router, and React Compiler are default recommendations. Everything else is a personal recommendation:
+**Why:** Running `create-next-app` on top of a cloned repo causes merge conflicts with existing files (`.git/`, `app/types/`, `CLAUDE.md`, etc.). To avoid this, the template ships with the boilerplate already installed so you can start immediately after cloning.
 
+The boilerplate was set up with these settings:
+
+- **TypeScript** — type safety throughout
+- **ESLint** — consistent code quality
+- **React Compiler** — automatic memoization, no manual `useMemo`/`useCallback`
 - **CSS Modules over Tailwind** — Tailwind becomes convoluted at scale
 - **No `src/` directory** — unnecessary indirection for this scope
+- **App Router** — the current Next.js default, required for server components and server actions
 - **No `AGENTS.md`** — `CLAUDE.md` handles all context
 
-**How:**
+**If you didn't use this template**, replicate the setup with:
 
 ```bash
 npx create-next-app@latest .
@@ -62,19 +69,7 @@ Would you like to include AGENTS.md? › No
 
 **Learn More:** [Next.js Installation](https://nextjs.org/docs/getting-started/installation)
 
-### 4. Commit and push the initial Next.js setup
-
-**Why:** Establishes a clean baseline before any app-specific code is added.
-
-**How:**
-
-```bash
-git add .
-git commit -m "init"
-git push origin main
-```
-
-### 5. Deploy the project to Vercel
+### 4. Deploy the project to Vercel
 
 **Why:** Vercel is the native deployment target for Next.js. Every push to `main` auto-deploys, giving you a live URL and a CI pipeline.
 
@@ -86,7 +81,7 @@ git push origin main
 4. Confirm the preset is **Next.js**
 5. Click **Deploy** → **Continue to Dashboard**
 
-### 6. Create and connect a Supabase database
+### 5. Create and connect a Supabase database
 
 **Why:** Connecting Supabase through Vercel automatically injects the required environment variables into your project and keeps both platforms in sync.
 
@@ -103,7 +98,7 @@ See `.env.local.example` for the expected keys.
 
 **Learn More:** [Supabase + Vercel Integration](https://supabase.com/docs/guides/getting-started/quickstarts/nextjs)
 
-### 7. Add `SUPABASE_PROJECT_ID` to `.env.local` and the `types` script to `package.json`
+### 6. Add `SUPABASE_PROJECT_ID` to `.env.local` and the `types` script to `package.json`
 
 **Why:** Type generation must be a one-command operation. The script reads your project ID from `.env.local` so it works consistently everywhere — protocol, commands, and CI.
 
@@ -130,9 +125,9 @@ npm run types
 
 `app/types/database.ts` will be empty until you run the schema in Supabase.
 
-### 8. Install Supabase dependencies
+### 7. Install Supabase dependencies
 
-**Why:** — `@supabase/supabase-js` is the database client and `@supabase/ssr` provides the cookie-based session helpers required for Next.js App Router. Both must be installed before writing any Supabase code. Installing before the plan step means Claude doesn't need to account for it
+**Why:** `@supabase/supabase-js` is the database client and `@supabase/ssr` provides the cookie-based session helpers required for Next.js App Router. Both must be installed before writing any Supabase code. Installing before the plan step means Claude doesn't need to account for it.
 
 **How:**
 
@@ -144,7 +139,7 @@ npm install @supabase/supabase-js @supabase/ssr
 
 ## II. Architecture
 
-### 9. Fill out `docs/01-goal.md` before writing any code
+### 8. Fill out `docs/01-goal.md` before writing any code
 
 **Why:** Claude reads `docs/01-goal.md` before doing anything. Writing it first forces every structural decision — roles, flows, screens, mutations — before any code exists to lock you in. Budget 5–10 minutes. Aim for ~1000 words. The more specific you are, the less you course-correct later.
 
@@ -168,7 +163,7 @@ Add sections when the project demands them:
 
 Be as specific as the project demands.
 
-### 10. Run `/schema` to generate the database schema
+### 9. Run `/schema` to generate the database schema
 
 **Why:** The schema is the contract. Everything downstream — queries, server actions, UI — derives from it. `app/types/database.ts` is generated from the schema and is the single source of truth for all types. If code needs a cast, the schema is wrong — fix the schema, not the code. Complete this step before writing any application code.
 
@@ -190,7 +185,7 @@ npm run types
 
 **Learn More:** [Supabase Row Level Security](https://supabase.com/docs/guides/auth/row-level-security) · [Supabase Type Generation](https://supabase.com/docs/reference/cli/supabase-gen-types)
 
-### 11. _(Optional)_ Run `/seed` to populate the database with sample data
+### 10. _(Optional)_ Run `/seed` to populate the database with sample data
 
 **Why:** Seed data lets you see the app working immediately — real rows, real relationships, real state. Useful for development and demos. Skip if you prefer to add data manually or through the app.
 
@@ -205,7 +200,7 @@ npm run types
 2. Claude generates `supabase/seed.sql`
 3. In the [Supabase SQL Editor](https://supabase.com/dashboard), run `seed.sql` after `schema.sql`
 
-### 12. Run `/plan` to generate the build plan
+### 11. Run `/plan` to generate the build plan
 
 **Why:** With `docs/01-goal.md` and `app/types/database.ts` complete, Claude has everything it needs — the goal, the schema, and the generated types — to produce a build plan tailored to this project. Running `/plan` before this point produces a generic plan; running it after produces one that knows your tables, your roles, and your mutation surface.
 
@@ -220,15 +215,15 @@ npm run types
 2. Claude reads `docs/01-goal.md`, `supabase/schema.sql`, and `app/types/database.ts`, researches Next.js and Supabase via Context7, and produces `docs/02-plan.md`
 3. Review the plan before writing any application code — each step identifies what gets built, who does it, and what the confirmation looks like
 
-> Note: Claude often mixes up the Next.js `middleware` file convention, which as been renamed to `proxy`. I recommend sendin Claude the following prompt to make sure everythign is correct:
+> Note: Claude often mixes up the Next.js `middleware` file convention, which has been renamed to `proxy`. I recommend sending Claude the following prompt to make sure everything is correct:
 >
 > ```
-> Middleware has been renamed to Proxy. Read the following documentation: [Renaming Middleware to Proxy](https://nextjs.org/docs/messages/middleware-to-proxy) then address and update the document accordingly. don’t implement yet
+> Middleware has been renamed to Proxy. Read the following documentation: [Renaming Middleware to Proxy](https://nextjs.org/docs/messages/middleware-to-proxy) then address and update the document accordingly. don't implement yet
 > ```
 
-### 13. Annotate and adjust `docs/02-plan.md`
+### 12. Annotate and adjust `docs/02-plan.md`
 
-**Why:** These notes correct assumptions, reject approaches, add constraints, or provide domain knowledge that Claude doesn’t have. Catching a wrong assumption here costs nothing; catching it mid-build costs hours.
+**Why:** These notes correct assumptions, reject approaches, add constraints, or provide domain knowledge that Claude doesn't have. Catching a wrong assumption here costs nothing; catching it mid-build costs hours.
 
 **How:**
 
@@ -237,7 +232,7 @@ npm run types
 
 ```markdown
 <!-- this should be a server action, not an API route -->
-<!-- remove this — we’re not building notifications in v1 -->
+<!-- remove this — we're not building notifications in v1 -->
 <!-- the threshold check needs to happen before the insert, not after -->
 <!-- this screen is read-only for staff; only admins can edit -->
 ```
@@ -245,10 +240,10 @@ npm run types
 3. When done annotating, run the following prompt:
 
 ```markdown
-I added a few notes to <document>, address all the notes and update the document accordingly. don’t implement yet
+I added a few notes to <document>, address all the notes and update the document accordingly. don't implement yet
 ```
 
-### 14. Add a task list to `docs/02-plan.md`
+### 13. Add a task list to `docs/02-plan.md`
 
 **Why:** A checkable task list is a shared source of truth for implementation. Claude marks each task complete as it goes so you both always know where things stand.
 
@@ -262,19 +257,19 @@ Add a detailed task list to docs/02-plan.md covering every phase and individual 
 
 ## III. Implementation
 
-### 15. Build out each phase
+### 14. Build out each phase
 
 **Why:** One phase at a time keeps scope tight, creates a natural checkpoint after each phase, and prevents issues from compounding across phases.
 
 **How:** For each phase in `docs/02-plan.md`, send this prompt — replacing the phase number with the one Claude wrote:
 
 ```markdown
-Implement Phase [N] from docs/02-plan.md. When you finish a task, mark it as completed in the plan. Do not stop until all tasks in this phase are complete. Do not add unnecessary comments or JSDoc. Do not use `any` or `unknown` types. Continuously run typecheck to make sure you’re not introducing new type errors.
+Implement Phase [N] from docs/02-plan.md. When you finish a task, mark it as completed in the plan. Do not stop until all tasks in this phase are complete. Do not add unnecessary comments or JSDoc. Do not use `any` or `unknown` types. Continuously run typecheck to make sure you're not introducing new type errors.
 ```
 
-After each phase, verify the confirmation criteria in the plan are met. Fix anything that doesn’t work before moving to the next phase. Repeat until all phases are complete.
+After each phase, verify the confirmation criteria in the plan are met. Fix anything that doesn't work before moving to the next phase. Repeat until all phases are complete.
 
-### 16. Launch
+### 15. Launch
 
 **Why:** Local success is not the same as production success. Environment variables, build output, and RLS policies all behave differently on Vercel than they do against a local dev server.
 
@@ -285,7 +280,7 @@ After each phase, verify the confirmation criteria in the plan are met. Fix anyt
 ```bash
 git add .
 git commit -m "complete"
-git push origin main
+git push
 ```
 
 2. Open the Vercel dashboard and confirm the deployment completes without errors

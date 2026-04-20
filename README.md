@@ -13,4 +13,8 @@ A scaffold and step-by-step protocol for building a full-stack web app (Next.js 
 
 ## How to use it
 
-Clone this repo into your project folder, scaffold Next.js on top of it, and follow `BUILD_PROTOCOL.md`.
+Clone this repo with the following command and follow `BUILD_PROTOCOL.md`:
+
+```bash
+gh repo clone masonomara/full-stack-web-app-build
+```
