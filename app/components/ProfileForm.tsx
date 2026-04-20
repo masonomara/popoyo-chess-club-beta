@@ -8,6 +8,16 @@ import {
   type ProfileState,
 } from '@/app/actions/profile'
 
+function errorMsg(state: ProfileState): string | null {
+  if (state && 'error' in state) return state.error
+  return null
+}
+
+function successMsg(state: ProfileState): string | null {
+  if (state && 'success' in state) return state.success
+  return null
+}
+
 export default function ProfileForm({
   nickname,
   country,
@@ -97,12 +107,8 @@ export default function ProfileForm({
               disabled={profilePending}
             />
           </div>
-          {'error' in (profileState ?? {}) && (
-            <p role="alert">{(profileState as { error: string }).error}</p>
-          )}
-          {'success' in (profileState ?? {}) && (
-            <p role="status">{(profileState as { success: string }).success}</p>
-          )}
+          {errorMsg(profileState) && <p role="alert">{errorMsg(profileState)}</p>}
+          {successMsg(profileState) && <p role="status">{successMsg(profileState)}</p>}
           <button type="submit" disabled={profilePending}>
             {profilePending ? 'Saving…' : 'Save'}
           </button>
