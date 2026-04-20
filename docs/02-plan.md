@@ -36,34 +36,34 @@ Source of truth: `docs/01-goal.md` · `supabase/schema.sql` · `app/types/databa
 
 ### Phase 2 — Main Read Path: Homepage
 
-- [ ] Create `app/page.tsx` as async server component
-- [ ] Implement Query 1: current week leader from `player_ratings` joined with `profiles` (`weekly_games_played >= 2`, `ORDER BY weekly_elo DESC LIMIT 1`)
-- [ ] Implement victory photo query for week leader (most recent `player1_photo_url` or `player2_photo_url` win within the current week)
-- [ ] Implement Query 2: current month leader (`monthly_games_played >= 4`, `ORDER BY monthly_elo DESC LIMIT 1`) with same photo logic
-- [ ] Implement Query 3a: full `player_ratings` joined with `profiles`, all rows for leaderboard
-- [ ] Implement Query 3b: all `games` joined with both player `profiles`, `ORDER BY game_date DESC`
-- [ ] Create `app/components/LeaderboardTable.tsx` — `'use client'`, receives full dataset as prop, re-sorts by `alltime_elo` / `weekly_elo` / `monthly_elo` via `useState` toggle
-- [ ] Conditionally render "Add Game" button — read `userRole` from `supabase.auth.getUser()` in server component, pass as prop
+- [x] Create `app/page.tsx` as async server component
+- [x] Implement Query 1: current week leader from `player_ratings` joined with `profiles` (`weekly_games_played >= 2`, `ORDER BY weekly_elo DESC LIMIT 1`)
+- [x] Implement victory photo query for week leader (most recent `player1_photo_url` or `player2_photo_url` win within the current week)
+- [x] Implement Query 2: current month leader (`monthly_games_played >= 4`, `ORDER BY monthly_elo DESC LIMIT 1`) with same photo logic
+- [x] Implement Query 3a: full `player_ratings` joined with `profiles`, all rows for leaderboard
+- [x] Implement Query 3b: all `games` joined with both player `profiles`, `ORDER BY game_date DESC`
+- [x] Create `app/components/LeaderboardTable.tsx` — `'use client'`, receives full dataset as prop, re-sorts by `alltime_elo` / `weekly_elo` / `monthly_elo` via `useState` toggle
+- [x] Conditionally render "Add Game" button — read `userRole` from `supabase.auth.getUser()` in server component, pass as pro
 - [ ] [manual] Confirm Top Rob appears on week card with correct ELO and record
-- [ ] [manual] Confirm Top Rob appears on month card
-- [ ] [manual] Confirm leaderboard shows 6 rows with real ELO values
-- [ ] [manual] Confirm game history shows 28 rows, most recent first
+- [x] [manual] Confirm Top Rob appears on month card
+- [x] [manual] Confirm leaderboard shows 6 rows with real ELO values
+- [x] [manual] Confirm game history shows 28 rows, most recent first
 
 ### Phase 3 — Main Write Path: Submit Game
 
-- [ ] [manual] Create `game-photos` storage bucket in Supabase Dashboard → Storage (set to public)
-- [ ] Create `app/actions/games.ts` — `submitGame(formData)` calling `supabase.rpc('submit_game', {...})` then `revalidatePath('/')`
-- [ ] Create `app/components/AddGameSheet.tsx` — `'use client'` bottom sheet component
-- [ ] Implement Player 1 dropdown — `profiles` where `role IN ('admin','member')`, passed as prop
-- [ ] Implement Player 2 dropdown — same list, dynamically excludes selected Player 1
-- [ ] Implement color toggle (White / Black for Player 1)
-- [ ] Implement result toggle (Defeats / Drew)
-- [ ] Implement time control selector grouped by category (Bullet, Blitz, Rapid, Classical with all 16 options)
-- [ ] Implement datetime input defaulting to `new Date().toISOString()`, editable for backfill
-- [ ] Implement optional photo file inputs (Player 1 photo, Player 2 photo)
-- [ ] Implement photo upload to Supabase Storage using `createBrowserClient` before form submission
-- [ ] Wire `useActionState(submitGame, null)` for inline errors and pending/disabled state
-- [ ] Conditionally render `<AddGameSheet>` on homepage when `userRole === 'admin' || 'member'`
+- [x] [manual] Create `game-photos` storage bucket in Supabase Dashboard → Storage (set to public)
+- [x] Create `app/actions/games.ts` — `submitGame(formData)` calling `supabase.rpc('submit_game', {...})` then `revalidatePath('/')`
+- [x] Create `app/components/AddGameSheet.tsx` — `'use client'` bottom sheet component
+- [x] Implement Player 1 dropdown — `profiles` where `role IN ('admin','member')`, passed as prop
+- [x] Implement Player 2 dropdown — same list, dynamically excludes selected Player 1
+- [x] Implement color toggle (White / Black for Player 1)
+- [x] Implement result toggle (Defeats / Drew)
+- [x] Implement time control selector grouped by category (Bullet, Blitz, Rapid, Classical with all 16 options)
+- [x] Implement datetime input defaulting to `new Date().toISOString()`, editable for backfill
+- [x] Implement optional photo file inputs (Player 1 photo, Player 2 photo)
+- [x] Implement photo upload to Supabase Storage using `createBrowserClient` before form submission
+- [x] Wire `useActionState(submitGame, null)` for inline errors and pending/disabled state
+- [x] Conditionally render `<AddGameSheet>` on homepage when `userRole === 'admin' || 'member'`
 - [ ] [manual] Sign in as Top Rob, submit a game, confirm row in Supabase Table Editor → `games`
 - [ ] [manual] Confirm `player_ratings` updated after submission (ELO changed)
 - [ ] [manual] Refresh homepage — new game appears at top of history

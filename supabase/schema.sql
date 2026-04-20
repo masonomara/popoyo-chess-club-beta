@@ -871,7 +871,7 @@ $$;
 
 -- ────────────────────────────────────────────────────────────────
 -- record_weekly_winner
--- Snapshots the top weekly player (≥2 games) into weekly_winners.
+-- Snapshots the top weekly player (≥3 games) into weekly_winners.
 -- p_week_start: the Monday that opened the week being closed.
 -- ────────────────────────────────────────────────────────────────
 CREATE OR REPLACE FUNCTION record_weekly_winner(p_week_start DATE)
@@ -896,7 +896,7 @@ BEGIN
   INTO winner_id, winner_elo,
        winner_wins, winner_losses, winner_draws, winner_games
   FROM player_ratings pr
-  WHERE pr.weekly_games_played >= 2
+  WHERE pr.weekly_games_played >= 3
   ORDER BY pr.weekly_elo DESC
   LIMIT 1;
 
@@ -937,7 +937,7 @@ $$;
 
 -- ────────────────────────────────────────────────────────────────
 -- record_monthly_winner
--- Snapshots the top monthly player (≥4 games) into monthly_winners.
+-- Snapshots the top monthly player (≥3 games) into monthly_winners.
 -- p_month_start: the 1st of the month being closed.
 -- ────────────────────────────────────────────────────────────────
 CREATE OR REPLACE FUNCTION record_monthly_winner(p_month_start DATE)
@@ -962,7 +962,7 @@ BEGIN
   INTO winner_id, winner_elo,
        winner_wins, winner_losses, winner_draws, winner_games
   FROM player_ratings pr
-  WHERE pr.monthly_games_played >= 4
+  WHERE pr.monthly_games_played >= 3
   ORDER BY pr.monthly_elo DESC
   LIMIT 1;
 
