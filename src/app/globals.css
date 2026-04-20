@@ -4,10 +4,10 @@
   --accent-light: #22c55e;
   --bg: #ffffff;
   --surface: #ffffff;
-  --surface-raised: #F3F8FA;
-  --border: #E5E7EE;
+  --surface-raised: #f3f8fa;
+  --border: #e5e7ee;
   --text: #171717;
-  --text-muted: #96A2B0;
+  --text-muted: #96a2b0;
   --text-dim: #424242;
   --radius: 8px;
   --radius-lg: 12px;
@@ -59,7 +59,10 @@ button {
   border-radius: var(--radius);
   padding: 9px 18px;
   line-height: 1.25;
-  transition: background-color 0.15s, opacity 0.15s, border-color 0.15s;
+  transition:
+    background-color 0.15s,
+    opacity 0.15s,
+    border-color 0.15s;
   border: none;
   display: inline-flex;
   align-items: center;
@@ -71,22 +74,22 @@ button:disabled {
   cursor: not-allowed;
 }
 
-button[type='submit'] {
+button[type="submit"] {
   background: var(--accent);
   color: #fff;
 }
 
-button[type='submit']:hover:not(:disabled) {
+button[type="submit"]:hover:not(:disabled) {
   background: var(--accent-hover);
 }
 
-button[type='button'] {
+button[type="button"] {
   background: transparent;
   color: var(--text-muted);
   border: 1px solid var(--border);
 }
 
-button[type='button']:hover:not(:disabled) {
+button[type="button"]:hover:not(:disabled) {
   border-color: var(--text-muted);
   color: var(--text);
 }
@@ -124,13 +127,13 @@ textarea:disabled {
   cursor: not-allowed;
 }
 
-input[type='file'] {
+input[type="file"] {
   padding: 6px 8px;
   color: var(--text-muted);
   cursor: pointer;
 }
 
-input[type='datetime-local'] {
+input[type="datetime-local"] {
   color-scheme: dark;
 }
 
@@ -162,30 +165,14 @@ label {
 
 /* ── Alerts ──────────────────────────────────────── */
 
-[role='alert'] {
+[role="alert"] {
   color: #f87171;
   font-size: 0.8125rem;
   margin-top: 6px;
 }
 
-[role='status'] {
+[role="status"] {
   color: #4ade80;
   font-size: 0.8125rem;
   margin-top: 6px;
-}
-
-/* ── Scrollbar ───────────────────────────────────── */
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
 }

@@ -15,7 +15,7 @@
 INSERT INTO profiles (id, email, nickname, country, role) VALUES
   ('1e5ca91f-5ed0-4c5d-997c-b3c472ed5d75', 'gguij002@gmail.com',      'Gery',    '🇨🇺', 'admin'),
   ('453928ea-dffe-484f-be7a-30bf8ed16132', 'mason.omara@gmail.com',   'Mason',   '🇺🇸', 'admin'),
-  ('656d61e9-171d-4dbd-8090-fc22229cdb61', 'robadair@gmail.com',      'Austin',  '🇺🇸', 'member'),
+  ('656d61e9-171d-4dbd-8090-fc22229cdb61', 'raadair33@gmail.com',      'Austin',  '🇺🇸', 'member'),
   ('76a3157a-a3d7-4831-a360-71fc468f939b', 'robemmerson15@gmail.com', 'Top Rob', '🇬🇧', 'member')
 ON CONFLICT (id) DO UPDATE SET
   nickname = EXCLUDED.nickname,
@@ -29,7 +29,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- ────────────────────────────────────────────────────────────────
 INSERT INTO approved_emails (email, added_by) VALUES
   ('gguij002@gmail.com',      '453928ea-dffe-484f-be7a-30bf8ed16132'),
-  ('robadair@gmail.com',      '453928ea-dffe-484f-be7a-30bf8ed16132'),
+  ('raadair33@gmail.com',      '453928ea-dffe-484f-be7a-30bf8ed16132'),
   ('robemmerson15@gmail.com', '453928ea-dffe-484f-be7a-30bf8ed16132'),
   ('mason.omara@gmail.com',   '453928ea-dffe-484f-be7a-30bf8ed16132')
 ON CONFLICT (email) DO NOTHING;
