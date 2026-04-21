@@ -80,6 +80,7 @@ export default function AddGameSheet({
   const [player1File, setPlayer1File] = useState<File | null>(null);
   const [player2File, setPlayer2File] = useState<File | null>(null);
   const [uploadPending, setUploadPending] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const [state, dispatch, actionPending] = useActionState<GameState, FormData>(
     submitGame,
@@ -109,19 +110,35 @@ export default function AddGameSheet({
 
   const supabase = createClient();
 
-  async function uploadFile(file: File, label: string): Promise<string | null> {
+  const MAX_FILE_SIZE = 50 * 1024 * 1024;
+
+  async function uploadFile(file: File, label: string): Promise<string> {
     const ext = file.name.split(".").pop() ?? "jpg";
     const path = `${Date.now()}-${label}.${ext}`;
-    const { error } = await supabase.storage
-      .from("game-photos")
-      .upload(path, file);
-    if (error) return null;
-    return supabase.storage.from("game-photos").getPublicUrl(path).data
-      .publicUrl;
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Upload timed out")), 30_000),
+    );
+    const { error } = await Promise.race([
+      supabase.storage.from("game-photos").upload(path, file),
+      timeout,
+    ]);
+    if (error) throw error;
+    return supabase.storage.from("game-photos").getPublicUrl(path).data.publicUrl;
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setUploadError(null);
+
+    if (player1File && player1File.size > MAX_FILE_SIZE) {
+      setUploadError("Player 1 photo is too large (max 50 MB).");
+      return;
+    }
+    if (player2File && player2File.size > MAX_FILE_SIZE) {
+      setUploadError("Player 2 photo is too large (max 50 MB).");
+      return;
+    }
+
     setUploadPending(true);
 
     const formData = new FormData();
@@ -136,12 +153,18 @@ export default function AddGameSheet({
     );
     formData.set("game_date", gameDate);
 
-    const [p1Url, p2Url] = await Promise.all([
-      player1File ? uploadFile(player1File, "p1") : Promise.resolve(null),
-      player2File ? uploadFile(player2File, "p2") : Promise.resolve(null),
-    ]);
-    if (p1Url) formData.set("player1_photo_url", p1Url);
-    if (p2Url) formData.set("player2_photo_url", p2Url);
+    try {
+      const [p1Url, p2Url] = await Promise.all([
+        player1File ? uploadFile(player1File, "p1") : Promise.resolve(null),
+        player2File ? uploadFile(player2File, "p2") : Promise.resolve(null),
+      ]);
+      if (p1Url) formData.set("player1_photo_url", p1Url);
+      if (p2Url) formData.set("player2_photo_url", p2Url);
+    } catch {
+      setUploadPending(false);
+      setUploadError("Photo upload failed. Please try a smaller image or try again.");
+      return;
+    }
 
     submittedRef.current = true;
     startTransition(() => {
@@ -282,6 +305,7 @@ export default function AddGameSheet({
             </div>
           </div>
 
+          {uploadError && <p role="alert">{uploadError}</p>}
           {state?.error && <p role="alert">{state.error}</p>}
 
           <div className={styles.actions}>
