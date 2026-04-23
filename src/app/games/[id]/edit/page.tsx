@@ -26,10 +26,7 @@ export default async function EditGamePage({
 
   if (!game) notFound()
 
-  const isAdmin = profile?.role === 'admin'
-  const isSubmitter = game.submitted_by === user.id
-
-  if (!isAdmin && !isSubmitter) redirect('/')
+  if (profile?.role !== 'admin' && profile?.role !== 'member') redirect('/')
 
   return (
     <>

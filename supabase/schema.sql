@@ -305,11 +305,11 @@ CREATE POLICY "games_insert_member_admin"
     AND submitted_by = auth.uid()
   );
 
--- Members may edit games they submitted
-CREATE POLICY "games_update_member_own"
+-- Members may edit any game
+CREATE POLICY "games_update_member"
   ON games FOR UPDATE
-  USING  (get_user_role() = 'member' AND submitted_by = auth.uid())
-  WITH CHECK (get_user_role() = 'member' AND submitted_by = auth.uid());
+  USING  (get_user_role() = 'member')
+  WITH CHECK (get_user_role() = 'member');
 
 -- Admins may edit any game
 CREATE POLICY "games_update_admin"
@@ -807,8 +807,10 @@ SET search_path = public
 AS $$
 DECLARE
   current_submitter UUID;
-  current_role      user_role := get_user_role();
+  v_role            user_role;
 BEGIN
+  SELECT role INTO v_role FROM profiles WHERE id = auth.uid();
+
   SELECT submitted_by INTO current_submitter
   FROM games WHERE id = p_game_id;
 
@@ -816,12 +818,7 @@ BEGIN
     RAISE EXCEPTION 'Game not found';
   END IF;
 
-  -- Members may only edit their own submissions; admins may edit any
-  IF current_role = 'member' AND current_submitter != auth.uid() THEN
-    RAISE EXCEPTION 'Unauthorized';
-  END IF;
-
-  IF current_role NOT IN ('member', 'admin') THEN
+  IF v_role NOT IN ('member', 'admin') THEN
     RAISE EXCEPTION 'Unauthorized';
   END IF;
 

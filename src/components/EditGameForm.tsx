@@ -2,7 +2,7 @@
 
 import { useState, useActionState, startTransition } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { updateGame, type GameState } from '@/actions/games'
+import { updateGame, deleteGame, type GameState } from '@/actions/games'
 import type { Tables } from '@/types/database'
 import styles from './EditGameForm.module.css'
 
@@ -59,6 +59,13 @@ export default function EditGameForm({
     null
   )
   const pending = uploadPending || actionPending
+
+  const boundDelete = deleteGame.bind(null, game.id)
+  const [deleteState, deleteDispatch, deletePending] = useActionState<GameState, FormData>(
+    boundDelete,
+    null
+  )
+  const [showConfirm, setShowConfirm] = useState(false)
 
   const supabase = createClient()
 
@@ -225,6 +232,40 @@ export default function EditGameForm({
           {pending ? 'Saving…' : 'Save Changes'}
         </button>
       </form>
+
+      <div className={styles.deleteSection}>
+        {!showConfirm ? (
+          <button
+            type="button"
+            className={styles.deleteBtn}
+            onClick={() => setShowConfirm(true)}
+            disabled={deletePending}
+          >
+            Delete Game
+          </button>
+        ) : (
+          <div>
+            <span style={{ fontSize: '0.875rem', marginRight: 12 }}>Are you sure?</span>
+            <button
+              type="button"
+              className={styles.deleteConfirmBtn}
+              disabled={deletePending}
+              onClick={() => startTransition(() => deleteDispatch(new FormData()))}
+            >
+              {deletePending ? 'Deleting…' : 'Yes, Delete'}
+            </button>
+            <button
+              type="button"
+              className={styles.deleteBtn}
+              onClick={() => setShowConfirm(false)}
+              disabled={deletePending}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+        {deleteState?.error && <p role="alert">{deleteState.error}</p>}
+      </div>
     </div>
   )
 }

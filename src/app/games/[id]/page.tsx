@@ -57,7 +57,7 @@ export default async function GameDetailPage({
       .select('role')
       .eq('id', user.id)
       .single()
-    canEdit = profile?.role === 'admin' || game.submitted_by === user.id
+    canEdit = profile?.role === 'admin' || profile?.role === 'member'
   }
 
   const typedComments = (comments ?? []) as CommentWithProfile[]

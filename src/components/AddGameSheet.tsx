@@ -9,7 +9,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { createClient } from "@/lib/supabase/client";
-import { submitGame, type GameState } from "@/actions/games";
+import { submitGame, type GameState, type EloChange } from "@/actions/games";
 import type { Tables } from "@/types/database";
 import styles from "./AddGameSheet.module.css";
 
@@ -81,6 +81,7 @@ export default function AddGameSheet({
   const [player2File, setPlayer2File] = useState<File | null>(null);
   const [uploadPending, setUploadPending] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [successData, setSuccessData] = useState<EloChange[] | null>(null);
 
   const [state, dispatch, actionPending] = useActionState<GameState, FormData>(
     submitGame,
@@ -96,14 +97,9 @@ export default function AddGameSheet({
   useEffect(() => {
     if (submittedRef.current && !actionPending) {
       setUploadPending(false);
-      if (state === null) {
-        setOpen(false);
+      if (state && 'success' in state) {
+        setSuccessData(state.eloChanges);
         submittedRef.current = false;
-        setPlayer1File(null);
-        setPlayer2File(null);
-        setIsDraw(false);
-        setTimeControl("10+0");
-        setGameDate(nowLocal());
       }
     }
   }, [actionPending, state]);
@@ -180,6 +176,16 @@ export default function AddGameSheet({
     }
   }
 
+  function handleDone() {
+    setOpen(false);
+    setSuccessData(null);
+    setPlayer1File(null);
+    setPlayer2File(null);
+    setIsDraw(false);
+    setTimeControl("10+0");
+    setGameDate(nowLocal());
+  }
+
   const player2Options = players.filter((p) => p.id !== player1Id);
 
   const dialog = (
@@ -191,137 +197,157 @@ export default function AddGameSheet({
     >
       <div
         aria-hidden="true"
-        onClick={() => !pending && setOpen(false)}
+        onClick={() => { if (!pending) { setOpen(false); setSuccessData(null); } }}
         className={`${styles.backdrop} ${open ? styles.backdropOpen : ""}`}
       />
       <div className={`${styles.sheet} ${open ? styles.sheetOpen : ""}`}>
         <div className={styles.handle} />
-        <p className={styles.sheetTitle}>Add Game</p>
+        <p className={styles.sheetTitle}>
+          {successData ? "Game Submitted" : "Add Game"}
+        </p>
 
-        <form onSubmit={handleSubmit}>
-          <div className={styles.gameRow}>
-            <select
-              value={player1Id}
-              onChange={(e) => handlePlayer1Change(e.target.value)}
-              required
-              className={styles.playerSelect}
-            >
-              {players.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.nickname}
-                </option>
-              ))}
-            </select>
-
-            <button
-              type="button"
-              onClick={() =>
-                setPlayer1Color((c) => (c === "white" ? "black" : "white"))
-              }
-              className={`${styles.colorBtn} ${player1Color === "white" ? styles.colorBtnWhite : ""}`}
-            >
-              {player1Color === "white" ? "○ White" : "● Black"}
+        {successData ? (
+          <div className={styles.successScreen}>
+            {successData.map((change) => (
+              <div key={change.playerId} className={styles.playerElo}>
+                <p className={styles.playerEloName}>{change.nickname}</p>
+                <div className={styles.eloDeltas}>
+                  <span>Weekly: {change.weeklyDelta >= 0 ? "+" : ""}{change.weeklyDelta}</span>
+                  <span>Monthly: {change.monthlyDelta >= 0 ? "+" : ""}{change.monthlyDelta}</span>
+                  <span>All-Time: {change.alltimeDelta >= 0 ? "+" : ""}{change.alltimeDelta}</span>
+                </div>
+              </div>
+            ))}
+            <button onClick={handleDone} className={styles.doneBtn}>
+              Done
             </button>
-
-            <button
-              type="button"
-              onClick={() => setIsDraw((d) => !d)}
-              className={`${styles.resultBtn} ${isDraw ? styles.resultBtnActive : ""}`}
-            >
-              {isDraw ? "Drew" : "Defeated"}
-            </button>
-
-            <select
-              value={player2Id}
-              onChange={(e) => setPlayer2Id(e.target.value)}
-              required
-              className={styles.playerSelect}
-            >
-              {player2Options.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.nickname}
-                </option>
-              ))}
-            </select>
           </div>
-
-          <div className={styles.fieldGroup}>
-            <div>
-              <label>Time Control</label>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div className={styles.gameRow}>
               <select
-                value={timeControl}
-                onChange={(e) => setTimeControl(e.target.value)}
+                value={player1Id}
+                onChange={(e) => handlePlayer1Change(e.target.value)}
+                required
+                className={styles.playerSelect}
               >
-                {CATEGORY_ORDER.map((cat) => (
-                  <optgroup
-                    key={cat}
-                    label={cat.charAt(0).toUpperCase() + cat.slice(1)}
-                  >
-                    {TIME_CONTROLS[cat].map((tc) => (
-                      <option key={tc} value={tc}>
-                        {tc}
-                      </option>
-                    ))}
-                  </optgroup>
+                {players.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nickname}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setPlayer1Color((c) => (c === "white" ? "black" : "white"))
+                }
+                className={`${styles.colorBtn} ${player1Color === "white" ? styles.colorBtnWhite : ""}`}
+              >
+                {player1Color === "white" ? "○ White" : "● Black"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setIsDraw((d) => !d)}
+                className={`${styles.resultBtn} ${isDraw ? styles.resultBtnActive : ""}`}
+              >
+                {isDraw ? "Drew" : "Defeated"}
+              </button>
+
+              <select
+                value={player2Id}
+                onChange={(e) => setPlayer2Id(e.target.value)}
+                required
+                className={styles.playerSelect}
+              >
+                {player2Options.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nickname}
+                  </option>
                 ))}
               </select>
             </div>
 
-            <div>
-              <label>Date & Time</label>
-              <input
-                type="datetime-local"
-                value={gameDate}
-                onChange={(e) => setGameDate(e.target.value)}
-                required
-              />
-            </div>
-          </div>
+            <div className={styles.fieldGroup}>
+              <div>
+                <label>Time Control</label>
+                <select
+                  value={timeControl}
+                  onChange={(e) => setTimeControl(e.target.value)}
+                >
+                  {CATEGORY_ORDER.map((cat) => (
+                    <optgroup
+                      key={cat}
+                      label={cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    >
+                      {TIME_CONTROLS[cat].map((tc) => (
+                        <option key={tc} value={tc}>
+                          {tc}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
 
-          <div className={styles.photoRow}>
-            <div>
-              <p className={styles.photoLabel}>
-                {players.find((p) => p.id === player1Id)?.nickname ??
-                  "Player 1"}{" "}
-                photo
-              </p>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setPlayer1File(e.target.files?.[0] ?? null)}
-              />
+              <div>
+                <label>Date & Time</label>
+                <input
+                  type="datetime-local"
+                  value={gameDate}
+                  onChange={(e) => setGameDate(e.target.value)}
+                  required
+                />
+              </div>
             </div>
-            <div>
-              <p className={styles.photoLabel}>
-                {players.find((p) => p.id === player2Id)?.nickname ??
-                  "Player 2"}{" "}
-                photo
-              </p>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setPlayer2File(e.target.files?.[0] ?? null)}
-              />
+
+            <div className={styles.photoRow}>
+              <div>
+                <p className={styles.photoLabel}>
+                  {players.find((p) => p.id === player1Id)?.nickname ??
+                    "Player 1"}{" "}
+                  photo
+                </p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setPlayer1File(e.target.files?.[0] ?? null)}
+                />
+              </div>
+              <div>
+                <p className={styles.photoLabel}>
+                  {players.find((p) => p.id === player2Id)?.nickname ??
+                    "Player 2"}{" "}
+                  photo
+                </p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setPlayer2File(e.target.files?.[0] ?? null)}
+                />
+              </div>
             </div>
-          </div>
 
-          {uploadError && <p role="alert">{uploadError}</p>}
-          {state?.error && <p role="alert">{state.error}</p>}
+            {uploadError && <p role="alert">{uploadError}</p>}
+            {state && 'error' in state && <p role="alert">{state.error}</p>}
 
-          <div className={styles.actions}>
-            <button type="submit" disabled={pending} className={styles.saveBtn}>
-              {pending ? "Saving…" : "Save Game"}
-            </button>
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              disabled={pending}
-              className={styles.cancelBtn}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+            <div className={styles.actions}>
+              <button type="submit" disabled={pending} className={styles.saveBtn}>
+                {pending ? "Saving…" : "Save Game"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                disabled={pending}
+                className={styles.cancelBtn}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
       </div>
     </div>
   );

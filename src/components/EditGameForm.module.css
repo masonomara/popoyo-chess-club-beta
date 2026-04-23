@@ -74,3 +74,26 @@
     grid-template-columns: 1fr;
   }
 }
+
+.deleteSection {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.deleteBtn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 8px 14px;
+  font-size: 0.8125rem;
+}
+
+.deleteConfirmBtn {
+  background: transparent;
+  border: 1px solid var(--error, #e53e3e);
+  color: var(--error, #e53e3e);
+  padding: 8px 14px;
+  font-size: 0.8125rem;
+  margin-right: 8px;
+}
