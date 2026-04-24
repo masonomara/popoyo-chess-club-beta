@@ -264,7 +264,7 @@ export default function EditGameForm({
             </button>
           </div>
         )}
-        {deleteState?.error && <p role="alert">{deleteState.error}</p>}
+        {deleteState && 'error' in deleteState && <p role="alert">{deleteState.error}</p>}
       </div>
     </div>
   )
