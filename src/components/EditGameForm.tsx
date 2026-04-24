@@ -226,7 +226,7 @@ export default function EditGameForm({
         </div>
 
         {uploadError && <p role="alert">{uploadError}</p>}
-        {state?.error && <p role="alert">{state.error}</p>}
+        {state && 'error' in state && <p role="alert">{state.error}</p>}
 
         <button type="submit" disabled={pending}>
           {pending ? 'Saving…' : 'Save Changes'}
