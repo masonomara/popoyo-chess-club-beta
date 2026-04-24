@@ -208,19 +208,43 @@ export default function AddGameSheet({
 
         {successData ? (
           <div className={styles.successScreen}>
-            {successData.map((change) => (
-              <div key={change.playerId} className={styles.playerElo}>
-                <p className={styles.playerEloName}>{change.nickname}</p>
-                <div className={styles.eloDeltas}>
-                  <span>Weekly: {change.weeklyDelta >= 0 ? "+" : ""}{change.weeklyDelta}</span>
-                  <span>Monthly: {change.monthlyDelta >= 0 ? "+" : ""}{change.monthlyDelta}</span>
-                  <span>All-Time: {change.alltimeDelta >= 0 ? "+" : ""}{change.alltimeDelta}</span>
+            <p className={styles.resultHeader}>
+              {isDraw
+                ? "Draw"
+                : `${successData[0].nickname} defeated ${successData[1].nickname}`}
+            </p>
+
+            {successData.map((change, i) => {
+              const isWinner = !isDraw && i === 0;
+              const rows = [
+                { label: "Weekly",   elo: change.weeklyElo,  delta: change.weeklyDelta },
+                { label: "Monthly",  elo: change.monthlyElo, delta: change.monthlyDelta },
+                { label: "All-Time", elo: change.alltimeElo, delta: change.alltimeDelta },
+              ];
+              return (
+                <div key={change.playerId} className={styles.playerElo}>
+                  <div className={styles.playerEloHeader}>
+                    <p className={styles.playerEloName}>{change.nickname}</p>
+                    {isWinner && <span className={styles.winnerBadge}>Won</span>}
+                  </div>
+                  {rows.map(({ label, elo, delta }) => (
+                    <div key={label} className={styles.eloRow}>
+                      <span className={styles.eloLabel}>{label}</span>
+                      <span className={styles.eloValue}>{elo}</span>
+                      <span className={
+                        delta > 0 ? styles.eloPositive :
+                        delta < 0 ? styles.eloNegative :
+                        styles.eloNeutral
+                      }>
+                        {delta > 0 ? `+${delta}` : `${delta}`}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            ))}
-            <button onClick={handleDone} className={styles.doneBtn}>
-              Done
-            </button>
+              );
+            })}
+
+            <button onClick={handleDone} className={styles.doneBtn}>Done</button>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>

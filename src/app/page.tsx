@@ -99,9 +99,6 @@ export default async function HomePage() {
       )}
 
       <div className={styles.leaderSection}>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.sectionTitle}>Leaderboard</h2>
-        </div>
         <LeaderboardTable ratings={ratings ?? []} />
       </div>
 

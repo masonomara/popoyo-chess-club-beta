@@ -163,18 +163,30 @@
 .successScreen {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
   padding-top: 4px;
 }
 
+.resultHeader {
+  text-align: center;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
 .playerElo {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
   padding: 14px 16px;
   background: var(--surface-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
+}
+
+.playerEloHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .playerEloName {
@@ -184,10 +196,55 @@
   color: var(--text);
 }
 
-.eloDeltas {
+.winnerBadge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.eloRow {
   display: flex;
-  gap: 16px;
+  align-items: center;
+  padding: 7px 0;
   font-size: 0.8125rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.eloRow:last-child {
+  border-bottom: none;
+}
+
+.eloLabel {
+  flex: 1;
+  color: var(--text-muted);
+}
+
+.eloValue {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  margin-right: 16px;
+}
+
+.eloPositive {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #22c55e;
+}
+
+.eloNegative {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #ef4444;
+}
+
+.eloNeutral {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
   color: var(--text-muted);
 }
 

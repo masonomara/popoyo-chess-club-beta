@@ -11,6 +11,9 @@ export type EloChange = {
   weeklyDelta: number
   monthlyDelta: number
   alltimeDelta: number
+  weeklyElo: number
+  monthlyElo: number
+  alltimeElo: number
 }
 
 export type GameState =
@@ -111,6 +114,9 @@ export async function submitGame(
     weeklyDelta:  Math.round(getElo(afterRatings, id, 'weekly_elo')  - getElo(beforeRatings, id, 'weekly_elo')),
     monthlyDelta: Math.round(getElo(afterRatings, id, 'monthly_elo') - getElo(beforeRatings, id, 'monthly_elo')),
     alltimeDelta: Math.round(getElo(afterRatings, id, 'alltime_elo') - getElo(beforeRatings, id, 'alltime_elo')),
+    weeklyElo:   getElo(afterRatings, id, 'weekly_elo'),
+    monthlyElo:  getElo(afterRatings, id, 'monthly_elo'),
+    alltimeElo:  getElo(afterRatings, id, 'alltime_elo'),
   }))
 
   revalidatePath('/')

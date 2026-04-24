@@ -53,7 +53,7 @@ export default function LeaderboardTable({
 }: {
   ratings: RatingWithProfile[]
 }) {
-  const [sortBy, setSortBy] = useState<SortKey>('alltime_elo')
+  const [sortBy, setSortBy] = useState<SortKey>('weekly_elo')
 
   const sorted = [...ratings]
     .filter((r) => getWindowStats(r, sortBy).gamesPlayed >= 3)
@@ -61,22 +61,25 @@ export default function LeaderboardTable({
 
   return (
     <div>
-      <div
-        role="group"
-        aria-label="Sort leaderboard"
-        className={styles.toggle}
-      >
-        {(Object.keys(SORT_LABELS) as SortKey[]).map((key) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setSortBy(key)}
-            aria-pressed={sortBy === key}
-            className={`${styles.toggleBtn} ${sortBy === key ? styles.toggleBtnActive : ''}`}
-          >
-            {SORT_LABELS[key]}
-          </button>
-        ))}
+      <div className={styles.header}>
+        <h2 className={styles.title}>Leaderboard</h2>
+        <div
+          role="group"
+          aria-label="Sort leaderboard"
+          className={styles.toggle}
+        >
+          {(Object.keys(SORT_LABELS) as SortKey[]).map((key) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setSortBy(key)}
+              aria-pressed={sortBy === key}
+              className={`${styles.toggleBtn} ${sortBy === key ? styles.toggleBtnActive : ''}`}
+            >
+              {SORT_LABELS[key]}
+            </button>
+          ))}
+        </div>
       </div>
 
       {sorted.length === 0 ? (

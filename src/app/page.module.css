@@ -69,21 +69,10 @@
 
 /* ── Leaderboard section ─────────────────────────── */
 
-.sectionHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.sectionTitle {
-  font-size: 1.125rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
 .leaderSection {
   margin-bottom: 48px;
+  background: var(--surface);
+
 }
 
 /* ── Game history ────────────────────────────────── */

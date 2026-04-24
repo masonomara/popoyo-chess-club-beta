@@ -1,34 +1,49 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 16px 20px 0px 20px;
+}
+
+.title {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
 .toggle {
   display: flex;
-  gap: 4px;
-  margin-bottom: 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 4px;
-  width: fit-content;
+  margin: 0;
+  background: rgb(228, 231, 237);
+  border-radius: 100px;
+  padding: 2px;
+  width: 244px;
+  height: 36px;
 }
 
 .toggleBtn {
   background: transparent;
-  color: var(--text-muted);
-  border: none;
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-
-.toggleBtn:hover:not(.active) {
   color: var(--text);
-  background: var(--surface-raised);
+  border: none;
+  height: 32px;
+  border-radius: 100px;
+  cursor: pointer;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 12px;
+  padding: 0px;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.toggleBtnActive {
-  background: var(--accent);
-  color: #fff;
+
+
+.toggleBtn.toggleBtnActive {
+  background: var(--surface);
 }
 
 .table {
@@ -53,7 +68,7 @@
   text-align: center;
 }
 
-.table th:nth-child(n+3) {
+.table th:nth-child(n + 3) {
   text-align: right;
   width: 52px;
 }
@@ -86,6 +101,7 @@
 .playerCell {
   font-weight: 600;
   display: flex;
+  font-size: 16px;
   align-items: center;
   gap: 8px;
 }
