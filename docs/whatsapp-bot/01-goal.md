@@ -1,0 +1,1 @@
+I want to create a WhatsApp bot that I can put inside our chess group message. When someone elaves n unstructured game result (e.g. "Gery (black) beats Mason") the bot aprses the message, commits the server action of creating a game (submitted by wahtsappbot rather than user UUID) and then responds with the server action result s(elo change). 
