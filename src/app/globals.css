@@ -6,9 +6,9 @@
   --surface: #ffffff;
   --surface-raised: #f3f8fa;
   --border: #e5e7ee;
-  --text: #171717;
-  --text-muted: #96a2b0;
-  --text-dim: #424242;
+  --text: #333;
+  --text-muted: #98A2AF;
+  --text-dim: #555;
   --radius: 8px;
   --radius-lg: 12px;
   --font: var(--font-sans, "Albert Sans", system-ui, sans-serif);

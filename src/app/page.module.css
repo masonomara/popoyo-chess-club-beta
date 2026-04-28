@@ -72,7 +72,11 @@
 .leaderSection {
   margin-bottom: 48px;
   background: var(--surface);
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding-bottom: 20px;
 }
 
 /* ── Game history ────────────────────────────────── */
