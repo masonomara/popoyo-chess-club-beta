@@ -45,6 +45,8 @@ export default async function HomePage() {
 
   return (
     <>
+      <h2 className={styles.championshipTitle}>Current Champions</h2>
+
       {(weekWinner?.profiles || monthWinner?.profiles) && (
         <div className={styles.winnersRow}>
           {weekWinner?.profiles && (
@@ -102,7 +104,7 @@ export default async function HomePage() {
         <LeaderboardTable ratings={ratings ?? []} />
       </div>
 
-      <div>
+      <div className={styles.header}>
         <h2 className={styles.historyTitle}>Game History</h2>
         <ul className={styles.gameList}>
           {(games ?? []).map((game) => {
